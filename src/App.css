@@ -1,0 +1,403 @@
+/* ======================================================
+   RESET
+====================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 15px;
+}
+
+/* ======================================================
+   APP
+====================================================== */
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* ======================================================
+   PAGE
+====================================================== */
+
+.page {
+  width: 90%;
+  max-width: 1200px;
+  margin: 30px auto;
+}
+
+.page h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 32px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  margin-bottom: 0;
+}
+
+.page-header .btn-primary {
+  width: auto;
+  margin: 0;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 35px;
+  border-bottom: 1px solid;
+  height: 100px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid;
+  padding: 20px;
+}
+
+/* ======================================================
+   DASHBOARD
+====================================================== */
+
+.dashboard {
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  border: 1px solid;
+  padding: 25px;
+}
+
+.dashboard-card h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.dashboard-card p {
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* ======================================================
+   ACTION PAGES
+====================================================== */
+
+.cards-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.action-card {
+  border: 1px solid;
+  padding: 25px;
+}
+
+.action-card h2 {
+  margin-bottom: 15px;
+}
+
+.action-card p {
+  line-height: 1.6;
+}
+
+/* ======================================================
+   FORM
+====================================================== */
+
+.form-card {
+  width: 700px;
+  margin: 0 auto;
+  border: 1px solid;
+  padding: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid;
+}
+
+.form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.auth-form .btn-primary {
+  width: 100%;
+  margin: 5px 0 0;
+}
+
+.error {
+  font-size: 13px;
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.btn-primary {
+  width: 170px;
+  padding: 10px 20px;
+  margin: 15px auto 0;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  width: 170px;
+  padding: 10px 20px;
+  margin: 15px auto 0;
+  border: 1px solid;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-view {
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.btn-edit {
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.btn-toggle {
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+/* ======================================================
+   TABLE
+====================================================== */
+
+.table-container {
+  width: 100%;
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table caption {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.table thead th {
+  padding: 14px;
+  border: 1px solid;
+  text-align: left;
+  font-weight: bold;
+}
+
+.table tbody td {
+  padding: 14px;
+  border: 1px solid;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ======================================================
+   DETAIL SHEET
+====================================================== */
+
+.patient-sheet {
+  width: 850px;
+  margin: auto;
+  border: 1px solid;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  border-bottom: 1px solid;
+}
+
+.sheet-header h1 {
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.patient-infos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.info-box {
+  padding: 22px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-box:nth-child(even) {
+  border-right: none;
+}
+
+.info-box span {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-box strong {
+  font-size: 18px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.info-box:last-child,
+.info-box:nth-last-child(2) {
+  border-bottom: none;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    height: auto;
+  }
+
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .dashboard-grid,
+  .cards-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    width: 95%;
+  }
+
+  .form-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .patient-sheet {
+    width: 100%;
+  }
+
+  .patient-infos {
+    grid-template-columns: 1fr;
+  }
+
+  .info-box {
+    border-right: none;
+  }
+}
