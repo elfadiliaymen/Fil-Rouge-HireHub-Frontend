@@ -33,21 +33,12 @@ function OffresList() {
       });
   }
 
-  const allTypes = offres.map((offre) => {
-    return offre.typeContrat;
-  });
+  const allTypes = offres.map((offre) => offre.typeContrat);
+  const uniqueTypes = allTypes.filter((type, index) => allTypes.indexOf(type) === index);
 
-  const uniqueTypes = allTypes.filter((type, index) => {
-    return allTypes.indexOf(type) === index;
-  });
-
-  let displayedOffres = offres;
-
-  if (selectedType !== "") {
-    displayedOffres = offres.filter((offre) => {
-      return offre.typeContrat === selectedType;
-    });
-  }
+  const displayedOffres = selectedType !== ""
+    ? offres.filter((offre) => offre.typeContrat === selectedType)
+    : offres;
 
   return (
     <div className="page">
@@ -63,74 +54,40 @@ function OffresList() {
           onChange={(e) => setSelectedType(e.target.value)}
         >
           <option value="">Tous les types</option>
-
-          {uniqueTypes.map((type, index) => {
-            return <option key={index} value={type}>{type}</option>;
-          })}
+          {uniqueTypes.map((type, index) => (
+            <option key={index} value={type}>{type}</option>
+          ))}
         </select>
       </div>
 
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Titre</th>
-              <th>Type de contrat</th>
-              <th>Localisation</th>
-              <th>Date limite</th>
-              <th>Recruteur</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {offres.length > 0 ? (
-              displayedOffres.map((offre) => (
-                <tr key={offre.id}>
-                  <td>{offre.id}</td>
-                  <td>{offre.titre}</td>
-                  <td>{offre.typeContrat}</td>
-                  <td>{offre.localisation}</td>
-                  <td>{offre.dateLimite}</td>
-                  <td>
-                    {offre.recruteur?.prenom} {offre.recruteur?.nom}
-                  </td>
-
-                  <td className="table-actions">
-                    <Link
-                      className="btn-view"
-                      to={`/consulter-offre/${offre.id}`}
-                    >
-                      Consulter
-                    </Link>
-
-                    <Link
-                      className="btn-edit"
-                      to={`/update-offre/${offre.id}`}
-                    >
-                      Modifier
-                    </Link>
-
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(offre.id)}
-                    >
-                      Supprimer
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7">
-                  Aucune offre trouvée.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {displayedOffres.length > 0 ? (
+        <div className="offres-grid">
+          {displayedOffres.map((offre) => (
+            <div className="offre-card" key={offre.id}>
+              <h2>{offre.titre}</h2>
+              <span className="offre-type">{offre.typeContrat}</span>
+              <p className="offre-location">{offre.localisation}</p>
+              <p className="offre-date">Date limite : {offre.dateLimite}</p>
+              <p className="offre-recruiter">
+                {offre.recruteur?.prenom} {offre.recruteur?.nom}
+              </p>
+              <div className="offre-actions">
+                <Link className="btn-view" to={`/consulter-offre/${offre.id}`}>
+                  Consulter
+                </Link>
+                <Link className="btn-edit" to={`/update-offre/${offre.id}`}>
+                  Modifier
+                </Link>
+                <button className="btn-delete" onClick={() => handleDelete(offre.id)}>
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>Aucune offre trouvée.</p>
+      )}
     </div>
   );
 }
