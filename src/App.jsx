@@ -6,6 +6,7 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import RoleGuard from "./Components/RoleGuard";
+import DashboardLayout from "./Components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import UserActions from "./pages/Users/UserActions";
 import UsersList from "./pages/Users/UsersList";
@@ -48,297 +49,240 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route
-          path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/users-actions"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/users-actions"
+            element={
               <RoleGuard allowedRoles={["ADMIN"]}>
                 <UserActions />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/users"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/users"
+            element={
               <RoleGuard allowedRoles={["ADMIN"]}>
                 <UsersList />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/add-user"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/add-user"
+            element={
               <RoleGuard allowedRoles={["ADMIN"]}>
                 <AddUser />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/consulter-user/:userId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/consulter-user/:userId"
+            element={
               <RoleGuard allowedRoles={["ADMIN"]}>
                 <ConsulterUser />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/update-user/:userId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/update-user/:userId"
+            element={
               <RoleGuard allowedRoles={["ADMIN"]}>
                 <ModifieUser />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/cvs-actions"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/cvs-actions"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <CvActions />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/cvs"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/cvs"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <CvsList />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/add-cv"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/add-cv"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
                 <AddCv />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/consulter-cv/:cvId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/consulter-cv/:cvId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <ConsulterCv />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/update-cv/:cvId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/update-cv/:cvId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
                 <ModifieCv />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/candidatures-actions"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/candidatures-actions"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <CandidatureActions />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/candidatures"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/candidatures"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <CandidaturesList />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/add-candidature"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/add-candidature"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
                 <AddCandidature />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/consulter-candidature/:candidatureId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/consulter-candidature/:candidatureId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <ConsulterCandidature />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/update-candidature/:candidatureId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/update-candidature/:candidatureId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <ModifieCandidature />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/offres-actions"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/offres-actions"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <OffreActions />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/offres"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/offres"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <OffresList />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/add-offre"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/add-offre"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <AddOffre />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/consulter-offre/:offreId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/consulter-offre/:offreId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
                 <ConsulterOffre />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/update-offre/:offreId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/update-offre/:offreId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <ModifieOffre />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/entretiens-actions"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/entretiens-actions"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <EntretienActions />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/entretiens"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/entretiens"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <EntretiensList />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/add-entretien"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/add-entretien"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <AddEntretien />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/consulter-entretien/:entretienId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/consulter-entretien/:entretienId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <ConsulterEntretien />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/update-entretien/:entretienId"
-          element={
-            <ProtectedRoute>
+          <Route
+            path="/update-entretien/:entretienId"
+            element={
               <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
                 <ModifieEntretien />
               </RoleGuard>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
+        </Route>
       </Routes>
 
       {!hideLayout && <Footer />}

@@ -18,7 +18,6 @@ function Header() {
 
       <nav className="header-nav">
         <Link to="/">Accueil</Link>
-        <Link to="/dashboard">Dashboard</Link>
         <button className="btn-primary" onClick={logout}>Déconnexion</button>
       </nav>
     </header>
