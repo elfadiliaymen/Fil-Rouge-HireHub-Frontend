@@ -1,90 +1,102 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import api from "../../api/api";
+import { getApiErrorMessage } from "../../api/api";
+import { formatDate } from "../../utils/format";
+import Skeleton from "../../Components/ui/Skeleton";
+import ErrorState from "../../Components/ui/ErrorState";
+import Button from "../../Components/ui/Button";
+import "./Cvs.css";
 
-function ConsulterCv() {
+export default function ConsulterCv() {
   const { cvId } = useParams();
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState("");
   const [cv, setCv] = useState(null);
 
-  useEffect(() => {
-    api.get(`/cv/${cvId}`)
-      .then((res) => setCv(res.data))
-      .catch((err) => console.log(err));
-  }, [cvId]);
+  function load() {
+    setStatus("loading");
+    setError("");
 
-  if (!cv) {
-    return (
-      <div className="page">
-        <h2>Chargement...</h2>
-      </div>
-    );
+    api
+      .get("/cv/" + cvId)
+      .then(function (response) {
+        setCv(response.data);
+        setStatus("success");
+      })
+      .catch(function (reason) {
+        setError(getApiErrorMessage(reason));
+        setStatus("error");
+      });
+  }
+
+  useEffect(load, [cvId]);
+
+  function handleDownload() {
+    api
+      .get("/cv/download/" + cv.id, { responseType: "blob" })
+      .then(function (response) {
+        const url = window.URL.createObjectURL(response.data);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = cv.nomFichier || "cv.pdf";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
+      });
+  }
+
+  if (status === "loading") {
+    return <Skeleton lines={4} />;
+  }
+
+  if (status === "error") {
+    return <ErrorState message={error} onRetry={load} />;
   }
 
   return (
-    <div className="page">
-      <div className="patient-sheet">
-        <div className="sheet-header">
-          <div>
-            <h1>Fiche du CV</h1>
-            <p>
-              Informations du CV
-            </p>
-          </div>
-
-          <Link
-            to={`/update-cv/${cv.id}`}
-            className="btn-edit"
-          >
-            Modifier
-          </Link>
+    <div className="consulter-cv-page">
+      <div className="page-head">
+        <div>
+          <h1>Détail du CV</h1>
+          <p className="text-muted">Informations du fichier déposé.</p>
         </div>
+        <Link to="/cvs" className="btn btn-secondary">
+          <ArrowBackIcon /> Mes CV
+        </Link>
+      </div>
 
-        <div className="patient-infos">
-          <div className="info-box">
-            <span>ID</span>
-            <strong>{cv.id}</strong>
+      <div className="detail-card">
+        <dl className="detail-grid">
+          <div className="detail-field">
+            <dt>Nom du fichier</dt>
+            <dd>{cv.nomFichier}</dd>
           </div>
-
-          <div className="info-box">
-            <span>Nom du fichier</span>
-            <strong>{cv.nomFichier}</strong>
+          <div className="detail-field">
+            <dt>Date de dépôt</dt>
+            <dd>{formatDate(cv.dateUpload)}</dd>
           </div>
-
-          <div className="info-box">
-            <span>Chemin du fichier</span>
-            <strong>{cv.cheminFichier}</strong>
-          </div>
-
-          <div className="info-box">
-            <span>Date d'upload</span>
-            <strong>{cv.dateUpload}</strong>
-          </div>
-
-          <div className="info-box">
-            <span>Candidat</span>
-            <strong>
+          <div className="detail-field">
+            <dt>Candidat</dt>
+            <dd>
               {cv.candidat?.prenom} {cv.candidat?.nom}
-            </strong>
+            </dd>
           </div>
+        </dl>
 
-          <div className="info-box">
-            <span>Email candidat</span>
-            <strong>{cv.candidat?.email}</strong>
-          </div>
-        </div>
-
-        <div className="sheet-header">
-          <a
-            className="btn-primary"
-            href={`http://localhost:8090/api/cv/download/${cv.id}`}
-            download={cv.nomFichier}
-          >
-            Télécharger
-          </a>
+        <div className="form-actions">
+          <Button onClick={handleDownload}>Télécharger</Button>
+          <Link to={`/update-cv/${cv.id}`} className="btn btn-secondary">
+            Remplacer
+          </Link>
         </div>
       </div>
     </div>
   );
 }
-
-export default ConsulterCv;

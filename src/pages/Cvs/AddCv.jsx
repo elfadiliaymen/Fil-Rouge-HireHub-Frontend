@@ -1,112 +1,117 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../../api/api";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { getApiErrorMessage } from "../../api/api";
+import { getUserId } from "../../Components/token";
+import FileUpload from "../../Components/ui/FileUpload";
+import Button from "../../Components/ui/Button";
+import "./Cvs.css";
 
-const schema = yup.object({
-  candidatId: yup
-    .number()
-    .typeError("L'ID du candidat doit être un nombre")
-    .positive("L'ID doit être positif")
-    .integer("L'ID doit être un entier")
-    .required("L'ID du candidat est obligatoire"),
+function uploadFiles(userId, files, onProgress) {
+  let request = null;
 
-  nomFichier: yup
-    .string()
-    .required("Le nom du fichier est obligatoire"),
+  files.forEach(function (file, index) {
+    const offset = index / files.length;
+    const span = 1 / files.length;
 
-  cheminFichier: yup
-    .string()
-    .required("Le chemin du fichier est obligatoire"),
-});
+    function upload() {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("candidatId", String(userId));
 
-function AddCv() {
-  const [candidats, setCandidats] = useState([]);
+      return api.post("/cv/upload", data, {
+        headers: { "Content-Type": undefined },
+        onUploadProgress: function (eventProgress) {
+          if (eventProgress.total) {
+            const fileProgress = eventProgress.loaded / eventProgress.total;
+            onProgress(Math.min(100, Math.round((offset + fileProgress * span) * 100)));
+          }
+        },
+      });
+    }
 
-  useEffect(() => {
-    api.get("/users/role/CANDIDAT")
-      .then((res) => setCandidats(res.data.content))
-      .catch((err) => console.log(err));
-  }, []);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      candidatId: "",
-      nomFichier: "",
-      cheminFichier: "",
-    },
+    request = request ? request.then(upload) : upload();
   });
 
-  function onSubmit(data) {
-    api.post("/cv", data)
-      .then((res) => {
-        console.log(res.data);
-        reset({
-          candidatId: "",
-          nomFichier: "",
-          cheminFichier: "",
-        });
-        alert("CV ajouté avec succès !");
+  return request;
+}
+
+export default function AddCv() {
+  const navigate = useNavigate();
+  const [files, setFiles] = useState([]);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  function handleFile(nextFiles, nextError) {
+    if (nextFiles) {
+      const list = Array.isArray(nextFiles) ? nextFiles : [nextFiles];
+      setFiles(list);
+      setFileName(
+        list.length > 1 ? `${list.length} fichiers sélectionnés` : list[0].name
+      );
+    } else {
+      setFiles([]);
+      setFileName("");
+    }
+    setFileError(nextError || "");
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (files.length === 0) {
+      setFileError("Choisissez au moins un fichier PDF.");
+      return;
+    }
+
+    setUploading(true);
+    setProgress(0);
+
+    uploadFiles(getUserId(), files, setProgress)
+      .then(function () {
+        toast.success("CV déposé avec succès !");
+        navigate("/cvs");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "Le dépôt du CV a échoué."));
+        setUploading(false);
       });
   }
 
   return (
-    <div className="page">
-      <div className="form-card">
-        <h1>Ajouter un CV</h1>
-
-        <form
-          className="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="form-group">
-            <label>Candidat</label>
-            <select {...register("candidatId")}>
-              <option value="">
-                Choisir un candidat
-              </option>
-
-              {candidats.map((candidat) => (
-                <option key={candidat.id} value={candidat.id}>
-                  {candidat.prenom} {candidat.nom}
-                </option>
-              ))}
-            </select>
-            <p className="error">{errors.candidatId?.message}</p>
-          </div>
-
-          <div className="form-group">
-            <label>Nom du fichier</label>
-            <input type="text" {...register("nomFichier")} />
-            <p className="error">{errors.nomFichier?.message}</p>
-          </div>
-
-          <div className="form-group">
-            <label>Chemin du fichier</label>
-            <input type="text" {...register("cheminFichier")} />
-            <p className="error">{errors.cheminFichier?.message}</p>
-          </div>
-
-          <button
-            className="btn-primary"
-            type="submit"
-          >
-            Ajouter
-          </button>
-        </form>
+    <div className="upload-cv-page">
+      <div className="page-head">
+        <div>
+          <h1>Déposer mes CV</h1>
+          <p className="text-muted">
+            Vos CV doivent être au format PDF (5 Mo maximum chacun).
+          </p>
+        </div>
       </div>
+
+      <form className="form-card" onSubmit={handleSubmit} noValidate>
+        <FileUpload
+          inputId="add-cv-file"
+          fileName={fileName}
+          multiple
+          onChange={handleFile}
+          error={fileError}
+          uploading={uploading}
+          progress={progress}
+        />
+
+        <div className="form-actions">
+          <Button type="submit" disabled={uploading}>
+            {uploading ? "Dépôt en cours…" : "Déposer le(s) CV"}
+          </Button>
+          <Link to="/cvs" className="btn btn-secondary">
+            Annuler
+          </Link>
+        </div>
+      </form>
     </div>
   );
 }
-
-export default AddCv;

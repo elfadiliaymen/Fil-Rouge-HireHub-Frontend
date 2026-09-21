@@ -1,0 +1,66 @@
+/* ============================================================
+   Cvs — CSS groupé (fusion littérale vérifiée)
+   Fusion de :
+     - CvsList.css     (liste : .cvs-page, .cv-list, .cv-card…)
+     - ConsulterCv.css (consulter : .consulter-cv-page)
+     - UploadCv.css    (déposer/remplacer : .upload-cv-page)
+   ============================================================ */
+
+/* ---------- Liste ---------- */
+.cvs-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  max-width: 760px;
+}
+
+.cv-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.cv-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg-raised);
+}
+
+.cv-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.cv-card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-wrap: nowrap;
+}
+
+.cv-card-actions .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* ---------- Consulter ---------- */
+.consulter-cv-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  max-width: 760px;
+}
+
+/* ---------- Déposer / Remplacer ---------- */
+.upload-cv-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}

@@ -1,129 +1,123 @@
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../../api/api";
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { getApiErrorMessage } from "../../api/api";
+import { formatDate } from "../../utils/format";
+import FileUpload from "../../Components/ui/FileUpload";
+import Button from "../../Components/ui/Button";
+import Skeleton from "../../Components/ui/Skeleton";
+import ErrorState from "../../Components/ui/ErrorState";
+import "./Cvs.css";
 
-const schema = yup.object({
-  candidatId: yup
-    .number()
-    .typeError("L'ID du candidat doit être un nombre")
-    .positive("L'ID doit être positif")
-    .integer("L'ID doit être un entier")
-    .required("L'ID du candidat est obligatoire"),
-
-  nomFichier: yup
-    .string()
-    .required("Le nom du fichier est obligatoire"),
-
-  cheminFichier: yup
-    .string()
-    .required("Le chemin du fichier est obligatoire"),
-});
-
-function ModifieCv() {
+export default function ModifieCv() {
   const { cvId } = useParams();
-  const [candidats, setCandidats] = useState([]);
+  const navigate = useNavigate();
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState("");
+  const [cv, setCv] = useState(null);
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      candidatId: "",
-      nomFichier: "",
-      cheminFichier: "",
-    },
-  });
+  function load() {
+    setStatus("loading");
+    setError("");
 
-  useEffect(() => {
-    api.get("/users/role/CANDIDAT")
-      .then((res) => setCandidats(res.data.content))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    if (cvId) {
-      api
-        .get(`/cv/${cvId}`)
-        .then((res) => {
-          reset({
-            candidatId: res.data.candidat?.id || "",
-            nomFichier: res.data.nomFichier || "",
-            cheminFichier: res.data.cheminFichier || "",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [cvId, reset]);
-
-  function onSubmit(data) {
     api
-      .put(`/cv/${cvId}`, data)
-      .then((res) => {
-        console.log(res.data);
-        alert("CV modifié avec succès !");
+      .get("/cv/" + cvId)
+      .then(function (response) {
+        setCv(response.data);
+        setStatus("success");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(function (reason) {
+        setError(getApiErrorMessage(reason));
+        setStatus("error");
       });
   }
 
+  useEffect(load, [cvId]);
+
+  function handleFile(nextFile, nextError) {
+    setFile(nextFile);
+    setFileName(nextFile ? nextFile.name : "");
+    setFileError(nextError || "");
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!file) {
+      setFileError("Choisissez un fichier PDF pour remplacer l'actuel.");
+      return;
+    }
+
+    setUploading(true);
+    setProgress(0);
+
+    const data = new FormData();
+    data.append("file", file);
+
+    api
+      .put("/cv/upload/" + cvId, data, {
+        headers: { "Content-Type": undefined },
+        onUploadProgress: function (eventProgress) {
+          if (eventProgress.total) {
+            setProgress(Math.round((eventProgress.loaded / eventProgress.total) * 100));
+          }
+        },
+      })
+      .then(function () {
+        toast.success("CV remplacé avec succès !");
+        navigate("/cvs");
+      })
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "Le remplacement du CV a échoué."));
+        setUploading(false);
+      });
+  }
+
+  if (status === "loading") {
+    return <Skeleton lines={4} />;
+  }
+
+  if (status === "error") {
+    return <ErrorState message={error} onRetry={load} />;
+  }
+
   return (
-    <div className="page">
-      <h1>Modifier un CV</h1>
-
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label>Candidat</label>
-          <select {...register("candidatId")}>
-            <option value="">
-              Choisir un candidat
-            </option>
-
-            {candidats.map((candidat) => (
-              <option key={candidat.id} value={candidat.id}>
-                {candidat.prenom} {candidat.nom}
-              </option>
-            ))}
-          </select>
-          <p className="error">{errors.candidatId?.message}</p>
+    <div className="upload-cv-page">
+      <div className="page-head">
+        <div>
+          <h1>Remplacer mon CV</h1>
+          <p className="text-muted">
+            Fichier actuel : <strong>{cv.nomFichier}</strong> (déposé le{" "}
+            {formatDate(cv.dateUpload)}).
+          </p>
         </div>
+      </div>
 
-        <div className="form-group">
-          <label>Nom du fichier</label>
-          <input type="text" {...register("nomFichier")} />
-          <p className="error">{errors.nomFichier?.message}</p>
+      <form className="form-card" onSubmit={handleSubmit} noValidate>
+        <FileUpload
+          inputId="update-cv-file"
+          fileName={fileName}
+          onChange={handleFile}
+          error={fileError}
+          uploading={uploading}
+          progress={progress}
+        />
+
+        <div className="form-actions">
+          <Button type="submit" disabled={uploading}>
+            {uploading ? "Remplacement…" : "Remplacer le CV"}
+          </Button>
+          <Link to="/cvs" className="btn btn-secondary">
+            Annuler
+          </Link>
         </div>
-
-        <div className="form-group">
-          <label>Chemin du fichier</label>
-          <input type="text" {...register("cheminFichier")} />
-          <p className="error">{errors.cheminFichier?.message}</p>
-        </div>
-
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
-
-        <Link
-          className="btn-secondary"
-          to={`/consulter-cv/${cvId}`}
-        >
-          Retour
-        </Link>
       </form>
     </div>
   );
 }
-
-export default ModifieCv;
