@@ -1,0 +1,99 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--s4);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s4);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pleine largeur quand la grille ne comporte qu'une section,
+   ou que la dernière section est impaire (évite le trou à droite) */
+.dashboard-grid > .dashboard-section:only-child,
+.dashboard-grid > .dashboard-section:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.dashboard-section {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  padding: var(--s5);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-bottom: var(--s4);
+}
+
+.section-head .section-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.section-head .btn {
+  position: static;
+  transform: none;
+}
+
+.row-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.row-list-item:first-child {
+  border-top: none;
+}
+
+.row-list-item:first-of-type {
+  border-top: none;
+}
+
+.row-list-item:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+.row-list-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.deadline {
+  font-size: 13px;
+  color: var(--warn);
+  font-weight: 500;
+  white-space: nowrap;
+}
