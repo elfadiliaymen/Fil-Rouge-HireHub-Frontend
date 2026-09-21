@@ -29,9 +29,24 @@ select {
 ====================================================== */
 
 .app {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+}
+
+.app-layout {
+  display: flex;
+  flex: 1;
+  padding-top: 64px;
+}
+
+.app-main {
+  flex: 1;
+  padding: 24px;
+}
+
+.app-layout.nav-open .app-main {
+  margin-left: 240px;
 }
 
 /* ======================================================
@@ -92,6 +107,25 @@ select {
   gap: 25px;
 }
 
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid;
+  padding: 6px 12px;
+}
+
+.user-chip-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.user-chip-role {
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid;
+}
+
 /* ======================================================
    FOOTER
 ====================================================== */
@@ -149,7 +183,7 @@ select {
 }
 
 .sidebar-link.active {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(20, 18, 16, 0.08);
   border-left: 4px solid;
   padding-left: 20px;
 }
@@ -303,6 +337,10 @@ select {
 
 .error {
   font-size: 13px;
+}
+
+.error-root {
+  text-align: center;
 }
 
 /* ======================================================

@@ -1,12 +1,18 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import Header from "./Components/Header";
-import Footer from "./Components/Footer";
-import ProtectedRoute from "./Components/ProtectedRoute";
+import ProtectedLayout from "./Components/ProtectedLayout";
+import PublicLayout from "./Components/PublicLayout";
 import RoleGuard from "./Components/RoleGuard";
-import DashboardLayout from "./Components/DashboardLayout";
+import AccessDenied from "./Components/AccessDenied";
+import NotFound from "./Components/NotFound";
+import AuthPage from "./auth/Auth";
+import Styleguide from "./pages/Styleguide";
+import Landing from "./pages/Landing";
+import Profile from "./pages/Profile";
+import { isAuthenticated, getRole } from "./Components/token";
+import { ROLES, MANAGEMENT_ROLES, getLandingRoute } from "./config/roles";
 import Dashboard from "./pages/Dashboard";
 import UserActions from "./pages/Users/UserActions";
 import UsersList from "./pages/Users/UsersList";
@@ -28,271 +34,168 @@ import OffresList from "./pages/Offres/OffresList";
 import AddOffre from "./pages/Offres/AddOffre";
 import ModifieOffre from "./pages/Offres/ModifieOffre";
 import ConsulterOffre from "./pages/Offres/ConsulterOffre";
+import OffresPubliques from "./pages/Offres/OffresPubliques";
+import OffrePublique from "./pages/Offres/OffrePublique";
 import EntretienActions from "./pages/Entretiens/EntretienActions";
 import EntretiensList from "./pages/Entretiens/EntretiensList";
 import AddEntretien from "./pages/Entretiens/AddEntretien";
 import ModifieEntretien from "./pages/Entretiens/ModifieEntretien";
 import ConsulterEntretien from "./pages/Entretiens/ConsulterEntretien";
-import Register from "./auth/Register";
-import Login from "./auth/Login";
+
+const PROTECTED_ROUTES = [
+  // Général
+  { path: "/dashboard", element: <Dashboard />, roles: ROLES },
+  { path: "/profile", element: <Profile />, roles: ROLES },
+
+  // Offres
+  { path: "/offres-actions", element: <OffreActions />, roles: MANAGEMENT_ROLES },
+  { path: "/offres", element: <OffresList />, roles: ROLES },
+  { path: "/add-offre", element: <AddOffre />, roles: MANAGEMENT_ROLES },
+  { path: "/consulter-offre/:offreId", element: <ConsulterOffre />, roles: ROLES },
+  { path: "/update-offre/:offreId", element: <ModifieOffre />, roles: MANAGEMENT_ROLES },
+
+  // Candidatures
+  {
+    path: "/candidatures-actions",
+    element: <CandidatureActions />,
+    roles: MANAGEMENT_ROLES,
+  },
+  { path: "/candidatures", element: <CandidaturesList />, roles: ROLES },
+  { path: "/add-candidature", element: <AddCandidature />, roles: ["ADMIN"] },
+  {
+    path: "/consulter-candidature/:candidatureId",
+    element: <ConsulterCandidature />,
+    roles: ROLES,
+  },
+  {
+    path: "/update-candidature/:candidatureId",
+    element: <ModifieCandidature />,
+    roles: MANAGEMENT_ROLES,
+  },
+
+  // CV (espace candidat)
+  { path: "/cvs-actions", element: <CvActions />, roles: ["CANDIDAT"] },
+  { path: "/cvs", element: <CvsList />, roles: ["CANDIDAT"] },
+  { path: "/add-cv", element: <AddCv />, roles: ["CANDIDAT"] },
+  { path: "/consulter-cv/:cvId", element: <ConsulterCv />, roles: ["CANDIDAT"] },
+  { path: "/update-cv/:cvId", element: <ModifieCv />, roles: ["CANDIDAT"] },
+
+  // Entretiens
+  {
+    path: "/entretiens-actions",
+    element: <EntretienActions />,
+    roles: MANAGEMENT_ROLES,
+  },
+  {
+    path: "/entretiens",
+    element: <EntretiensList />,
+    roles: MANAGEMENT_ROLES,
+  },
+  {
+    path: "/add-entretien",
+    element: <AddEntretien />,
+    roles: MANAGEMENT_ROLES,
+  },
+  {
+    path: "/consulter-entretien/:entretienId",
+    element: <ConsulterEntretien />,
+    roles: MANAGEMENT_ROLES,
+  },
+  {
+    path: "/update-entretien/:entretienId",
+    element: <ModifieEntretien />,
+    roles: MANAGEMENT_ROLES,
+  },
+
+  // Utilisateurs (admin uniquement)
+  { path: "/users-actions", element: <UserActions />, roles: ["ADMIN"] },
+  { path: "/users", element: <UsersList />, roles: ["ADMIN"] },
+  { path: "/add-user", element: <AddUser />, roles: ["ADMIN"] },
+  { path: "/consulter-user/:userId", element: <ConsulterUser />, roles: ["ADMIN"] },
+  { path: "/update-user/:userId", element: <ModifieUser />, roles: ["ADMIN"] },
+];
+
+function PublicOnly({ children }) {
+  if (isAuthenticated()) {
+    return <Navigate to={getLandingRoute(getRole())} replace />;
+  }
+
+  return children;
+}
 
 function App() {
-  const location = useLocation();
-  const hideLayout = location.pathname === "/login" || location.pathname === "/register";
-
   return (
-    <div className={hideLayout ? "app app-auth" : "app"}>
-      {!hideLayout && <Header />}
-
+    <>
       <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/auth"
+          element={
+            <PublicOnly>
+              <AuthPage />
+            </PublicOnly>
+          }
+        />
 
         <Route
+          path="/login"
           element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
+            <PublicOnly>
+              <AuthPage mode="login" />
+            </PublicOnly>
           }
-        >
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+        />
 
+        <Route
+          path="/register"
+          element={
+            <PublicOnly>
+              <AuthPage mode="register" />
+            </PublicOnly>
+          }
+        />
+
+        <Route path="/403" element={<AccessDenied />} />
+
+        <Route element={<PublicLayout />}>
           <Route
-            path="/users-actions"
+            path="/"
             element={
-              <RoleGuard allowedRoles={["ADMIN"]}>
-                <UserActions />
-              </RoleGuard>
+              <PublicOnly>
+                <Landing />
+              </PublicOnly>
             }
           />
-
-          <Route
-            path="/users"
-            element={
-              <RoleGuard allowedRoles={["ADMIN"]}>
-                <UsersList />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/add-user"
-            element={
-              <RoleGuard allowedRoles={["ADMIN"]}>
-                <AddUser />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/consulter-user/:userId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN"]}>
-                <ConsulterUser />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/update-user/:userId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN"]}>
-                <ModifieUser />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/cvs-actions"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <CvActions />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/cvs"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <CvsList />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/add-cv"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
-                <AddCv />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/consulter-cv/:cvId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <ConsulterCv />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/update-cv/:cvId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
-                <ModifieCv />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/candidatures-actions"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <CandidatureActions />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/candidatures"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <CandidaturesList />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/add-candidature"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "CANDIDAT"]}>
-                <AddCandidature />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/consulter-candidature/:candidatureId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <ConsulterCandidature />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/update-candidature/:candidatureId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <ModifieCandidature />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/offres-actions"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <OffreActions />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/offres"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <OffresList />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/add-offre"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <AddOffre />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/consulter-offre/:offreId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR", "CANDIDAT"]}>
-                <ConsulterOffre />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/update-offre/:offreId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <ModifieOffre />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/entretiens-actions"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <EntretienActions />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/entretiens"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <EntretiensList />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/add-entretien"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <AddEntretien />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/consulter-entretien/:entretienId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <ConsulterEntretien />
-              </RoleGuard>
-            }
-          />
-
-          <Route
-            path="/update-entretien/:entretienId"
-            element={
-              <RoleGuard allowedRoles={["ADMIN", "RECRUTEUR"]}>
-                <ModifieEntretien />
-              </RoleGuard>
-            }
-          />
+          <Route path="/styleguide" element={<Styleguide />} />
+          <Route path="/jobs" element={<OffresPubliques />} />
+          <Route path="/jobs/:offreId" element={<OffrePublique />} />
         </Route>
-      </Routes>
 
-      {!hideLayout && <Footer />}
+        <Route element={<ProtectedLayout />}>
+          <Route path="/access-denied" element={<AccessDenied />} />
+
+          {PROTECTED_ROUTES.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <RoleGuard allowedRoles={route.roles}>
+                  {route.element}
+                </RoleGuard>
+              }
+            />
+          ))}
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 
       <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
+        theme="dark"
       />
-    </div>
+    </>
   );
 }
 
