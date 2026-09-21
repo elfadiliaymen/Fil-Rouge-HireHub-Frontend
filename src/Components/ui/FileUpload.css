@@ -1,0 +1,65 @@
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.file-upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  color: var(--ink-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.file-upload-label:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.file-upload-progress {
+  height: 6px;
+  border-radius: 0;
+  background: var(--bg-hover);
+  overflow: hidden;
+}
+
+.file-upload-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.file-upload-clear {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.file-upload-clear:hover {
+  color: var(--danger-hover);
+}
+
+.file-upload-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger);
+}

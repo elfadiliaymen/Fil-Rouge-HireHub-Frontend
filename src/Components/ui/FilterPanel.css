@@ -1,0 +1,21 @@
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  align-self: flex-start;
+}
+
+.filter-panel-title {
+  margin: 0;
+  font-size: 15px;
+}
+
+.filter-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}

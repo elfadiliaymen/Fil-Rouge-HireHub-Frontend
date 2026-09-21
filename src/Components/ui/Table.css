@@ -1,0 +1,71 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead th {
+  padding: var(--s3) var(--s4);
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.table-actions-col {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s2);
+  white-space: nowrap;
+}
+
+.table-actions-col .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  height: 32px;
+  padding: 0 var(--s3);
+}
+
+.table-actions-col .btn.btn-icon,
+.table-actions-col a.btn.btn-icon,
+.table-actions-col button.btn.btn-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  align-self: center;
+}
+
+.table-empty-cell {
+  text-align: center;
+  color: var(--ink-muted);
+  padding: var(--s6) !important;
+}

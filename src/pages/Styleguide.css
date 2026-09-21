@@ -1,0 +1,37 @@
+.styleguide {
+  padding: var(--s6) var(--s5);
+}
+
+.styleguide-title {
+  margin-bottom: var(--s7);
+}
+
+.styleguide-title h1 {
+  font-size: 28px;
+}
+
+.styleguide-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s5) 0;
+  border-top: 1px solid var(--border);
+}
+
+.styleguide-section h2 {
+  font-size: 20px;
+}
+
+.styleguide-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s3);
+}
+
+.styleguide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--s4);
+  align-items: start;
+}
