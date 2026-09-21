@@ -1,0 +1,53 @@
+/* ============================================================
+   Entretiens - CSS groupé (concaténation programmatique littérale)
+   Fusion de :
+     - ConsulterEntretien.css
+     - EntretienForm.css
+     - EntretiensList.css
+   ============================================================ */
+
+/* ---------- ConsulterEntretien.css ---------- */
+.consulter-entretien-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  max-width: 860px;
+}
+
+.consulter-entretien-page .actions {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.consulter-entretien-page .detail-card h2 {
+  margin: 0 0 var(--s4);
+  font-size: 16px;
+}
+
+/* ---------- EntretienForm.css ---------- */
+.entretien-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  max-width: 640px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s3);
+}
+
+@media (max-width: 575px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- EntretiensList.css ---------- */
+.entretiens-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}

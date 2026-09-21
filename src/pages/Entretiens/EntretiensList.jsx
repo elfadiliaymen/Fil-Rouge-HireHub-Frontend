@@ -1,145 +1,179 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../api/api";
+import { getApiErrorMessage } from "../../api/api";
+import { formatDate, formatDateTime } from "../../utils/format";
+import { getRole, getUserId } from "../../Components/token";
+import Table from "../../Components/ui/Table";
+import Skeleton from "../../Components/ui/Skeleton";
+import ErrorState from "../../Components/ui/ErrorState";
+import EmptyState from "../../Components/ui/EmptyState";
+import ConfirmDialog from "../../Components/ui/ConfirmDialog";
+import Button from "../../Components/ui/Button";
+import "./Entretiens.css";
 
-function EntretiensList() {
+export default function EntretiensList() {
+  const role = getRole();
+  const userId = getUserId();
+  const isAdmin = role === "ADMIN";
+
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState("");
   const [entretiens, setEntretiens] = useState([]);
-  const [selectedRecruteur, setSelectedRecruteur] = useState("");
+  const [toDelete, setToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    api.get("/entretiens")
-      .then((res) => setEntretiens(res.data.content))
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  function load() {
+    setStatus("loading");
+    setError("");
 
-  function handleDelete(entretienId) {
-    const confirmed = window.confirm("Voulez-vous supprimer cet entretien ?");
+    const request =
+      role === "RECRUTEUR" && userId
+        ? api.get("/entretiens/recruteur/" + userId, { params: { page: 0, size: 50 } })
+        : api.get("/entretiens", { params: { page: 0, size: 50 } });
 
-    if (!confirmed) {
-      return;
-    }
-
-    api.delete(`/entretiens/${entretienId}`)
-      .then(() => {
-        setEntretiens((currentEntretiens) =>
-          currentEntretiens.filter((entretien) => entretien.id !== entretienId)
-        );
+    request
+      .then(function (response) {
+        setEntretiens(response.data.content || []);
+        setStatus("success");
       })
-      .catch((error) => {
-        console.log(error);
-        alert("La suppression a échoué.");
+      .catch(function (reason) {
+        setError(getApiErrorMessage(reason));
+        setStatus("error");
       });
   }
 
-  const allRecruteurs = entretiens.map((entretien) => {
-    return entretien.recruteur?.id;
-  });
+  useEffect(load, [role, userId]);
 
-  const uniqueRecruteurs = allRecruteurs.filter((recruteurId, index) => {
-    return allRecruteurs.indexOf(recruteurId) === index;
-  });
+  const canManageEntretien = (entretien) =>
+    isAdmin || Number(entretien.recruteur?.id) === Number(userId);
 
-  let displayedEntretiens = entretiens;
+  function handleDelete() {
+    if (!toDelete) return;
 
-  if (selectedRecruteur !== "") {
-    displayedEntretiens = entretiens.filter((entretien) => {
-      return entretien.recruteur?.id === Number(selectedRecruteur);
-    });
+    setDeleting(true);
+    api
+      .delete("/entretiens/" + toDelete.id)
+      .then(function () {
+        setEntretiens((current) => current.filter((e) => e.id !== toDelete.id));
+        toast.success("Entretien supprimé");
+        setToDelete(null);
+      })
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "La suppression a échoué."));
+      })
+      .finally(function () {
+        setDeleting(false);
+      });
   }
+
+  const columns = [
+    { key: "datetime", label: "Date" },
+    { key: "lieu", label: "Lieu" },
+    { key: "candidature", label: "Candidature" },
+    { key: "recruteur", label: "Recruteur" },
+    { key: "actions", label: "Actions", className: "table-actions-col" },
+  ];
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1>Liste des Entretiens</h1>
-
-        <Link className="btn-primary" to="/add-entretien">
-          + Ajouter
+    <div className="entretiens-page">
+      <div className="page-head">
+        <div>
+          <h1>Entretiens</h1>
+          <p className="text-muted">Planifiez et suivez vos entretiens.</p>
+        </div>
+        <Link to="/add-entretien" className="btn btn-primary">
+          <AddIcon /> Planifier
         </Link>
-
-        <select
-          value={selectedRecruteur}
-          onChange={(e) => setSelectedRecruteur(e.target.value)}
-        >
-          <option value="">Tous les recruteurs</option>
-
-          {uniqueRecruteurs.map((recruteurId, index) => {
-            const entretien = entretiens.find(
-              (entretien) => entretien.recruteur?.id === recruteurId
-            );
-            return (
-              <option key={index} value={recruteurId}>
-                {entretien?.recruteur?.prenom} {entretien?.recruteur?.nom}
-              </option>
-            );
-          })}
-        </select>
       </div>
 
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Date</th>
-              <th>Heure</th>
-              <th>Lieu</th>
-              <th>Candidature</th>
-              <th>Recruteur</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+      {status === "loading" && <Skeleton lines={5} />}
 
-          <tbody>
-            {entretiens.length > 0 ? (
-              displayedEntretiens.map((entretien) => (
-                <tr key={entretien.id}>
-                  <td>{entretien.id}</td>
-                  <td>{entretien.date}</td>
-                  <td>{entretien.heure}</td>
-                  <td>{entretien.lieu}</td>
-                  <td>{entretien.candidatureId}</td>
-                  <td>
-                    {entretien.recruteur?.prenom} {entretien.recruteur?.nom}
-                  </td>
+      {status === "error" && <ErrorState message={error} onRetry={load} />}
 
-                  <td className="table-actions">
+      {status === "success" && entretiens.length === 0 && (
+        <EmptyState
+          title="Aucun entretien"
+          message="Planifiez un entretien à partir d'une candidature."
+          action={
+            <Link to="/add-entretien" className="btn btn-primary">
+              Planifier
+            </Link>
+          }
+        />
+      )}
+
+      {status === "success" && entretiens.length > 0 && (
+        <Table columns={columns}>
+          {entretiens.map((entretien) => (
+            <tr key={entretien.id}>
+              <td>
+                <Link to={`/consulter-entretien/${entretien.id}`} className="table-link">
+                  {formatDateTime(`${entretien.date}T${entretien.heure}`)}
+                </Link>
+              </td>
+              <td>{entretien.lieu}</td>
+              <td>#{entretien.candidatureId}</td>
+              <td>
+                {entretien.recruteur
+                  ? `${entretien.recruteur.prenom} ${entretien.recruteur.nom}`
+                  : "—"}
+              </td>
+              <td className="table-actions-col">
+                <Link
+                  to={`/consulter-entretien/${entretien.id}`}
+                  className="btn btn-secondary btn-sm btn-icon"
+                  title="Consulter"
+                  aria-label="Consulter l'entretien"
+                >
+                  <VisibilityIcon />
+                </Link>
+                {canManageEntretien(entretien) && (
+                  <>
                     <Link
-                      className="btn-view"
-                      to={`/consulter-entretien/${entretien.id}`}
-                    >
-                      Consulter
-                    </Link>
-
-                    <Link
-                      className="btn-edit"
                       to={`/update-entretien/${entretien.id}`}
+                      className="btn btn-secondary btn-sm btn-icon"
+                      title="Modifier"
+                      aria-label="Modifier l'entretien"
                     >
-                      Modifier
+                      <EditIcon />
                     </Link>
-
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(entretien.id)}
+                    <Button
+                      variant="danger-solid"
+                      size="sm"
+                      className="btn-icon"
+                      title="Supprimer"
+                      aria-label="Supprimer l'entretien"
+                      onClick={() => setToDelete(entretien)}
                     >
-                      Supprimer
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7">
-                  Aucun entretien trouvé.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                      <DeleteIcon />
+                    </Button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </Table>
+      )}
+
+      <ConfirmDialog
+        open={Boolean(toDelete)}
+        title="Supprimer l'entretien"
+        message={
+          toDelete
+            ? `Voulez-vous vraiment supprimer l'entretien du ${formatDate(toDelete.date)} ?`
+            : ""
+        }
+        confirmLabel="Supprimer"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setToDelete(null)}
+      />
     </div>
   );
 }
-
-export default EntretiensList;

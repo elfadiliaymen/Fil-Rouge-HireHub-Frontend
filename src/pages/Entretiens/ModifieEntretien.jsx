@@ -1,40 +1,27 @@
-import api from "../../api/api";
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../../api/api";
+import { getApiErrorMessage } from "../../api/api";
+import { getRole, getUserId } from "../../Components/token";
+import { entretienFormSchema } from "../../utils/schemas/entretienSchema";
+import Input from "../../Components/ui/Input";
+import Select from "../../Components/ui/Select";
+import Button from "../../Components/ui/Button";
+import Skeleton from "../../Components/ui/Skeleton";
+import ErrorState from "../../Components/ui/ErrorState";
+import "./Entretiens.css";
 
-const schema = yup.object({
-  date: yup
-    .string()
-    .required("La date est obligatoire"),
-
-  heure: yup
-    .string()
-    .required("L'heure est obligatoire"),
-
-  lieu: yup
-    .string()
-    .required("Le lieu est obligatoire"),
-
-  candidatureId: yup
-    .number()
-    .typeError("L'ID de la candidature doit être un nombre")
-    .positive("L'ID doit être positif")
-    .integer("L'ID doit être un entier")
-    .required("La candidature est obligatoire"),
-
-  recruteurId: yup
-    .number()
-    .typeError("L'ID du recruteur doit être un nombre")
-    .positive("L'ID doit être positif")
-    .integer("L'ID doit être un entier")
-    .required("Le recruteur est obligatoire"),
-});
-
-function ModifieEntretien() {
+export default function ModifieEntretien() {
   const { entretienId } = useParams();
+  const navigate = useNavigate();
+  const role = getRole();
+  const isRecruteur = role === "RECRUTEUR";
+
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState("");
   const [candidatures, setCandidatures] = useState([]);
   const [recruteurs, setRecruteurs] = useState([]);
 
@@ -42,131 +29,161 @@ function ModifieEntretien() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(entretienFormSchema),
     defaultValues: {
       date: "",
       heure: "",
       lieu: "",
       candidatureId: "",
-      recruteurId: "",
+      recruteurId: isRecruteur ? getUserId() : "",
     },
   });
 
   useEffect(() => {
-    api.get("/candidatures")
-      .then((res) => setCandidatures(res.data.content))
-      .catch((err) => console.log(err));
-
-    api.get("/users/role/RECRUTEUR")
-      .then((res) => setRecruteurs(res.data.content))
-      .catch((err) => console.log(err));
+    api
+      .get("/candidatures", { params: { page: 0, size: 100 } })
+      .then(function (response) {
+        setCandidatures(response.data.content || []);
+      })
+      .catch(function () {
+        setCandidatures([]);
+      });
   }, []);
 
   useEffect(() => {
-    if (entretienId) {
-      api
-        .get(`/entretiens/${entretienId}`)
-        .then((res) => {
-          reset({
-            date: res.data.date || "",
-            heure: res.data.heure || "",
-            lieu: res.data.lieu || "",
-            candidatureId: res.data.candidatureId || "",
-            recruteurId: res.data.recruteur?.id || "",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+    if (isRecruteur) return;
+
+    api
+      .get("/users/role/RECRUTEUR", { params: { page: 0, size: 100 } })
+      .then(function (response) {
+        setRecruteurs(response.data.content || []);
+      })
+      .catch(function () {
+        setRecruteurs([]);
+      });
+  }, [isRecruteur]);
+
+  useEffect(() => {
+    api
+      .get("/entretiens/" + entretienId)
+      .then(function (response) {
+        const entretien = response.data;
+        reset({
+          date: entretien.date || "",
+          heure: entretien.heure || "",
+          lieu: entretien.lieu || "",
+          candidatureId: entretien.candidatureId || "",
+          recruteurId: isRecruteur ? getUserId() : entretien.recruteur?.id || "",
         });
-    }
-  }, [entretienId, reset]);
+        setStatus("success");
+      })
+      .catch(function (reason) {
+        setError(getApiErrorMessage(reason));
+        setStatus("error");
+      });
+  }, [entretienId, reset, isRecruteur]);
 
   function onSubmit(data) {
     api
-      .put(`/entretiens/${entretienId}`, data)
-      .then((res) => {
-        console.log(res.data);
-        alert("Entretien modifié avec succès !");
+      .put("/entretiens/" + entretienId, data)
+      .then(function () {
+        toast.success("Entretien mis à jour");
+        navigate("/entretiens");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "La mise à jour a échoué."));
       });
   }
 
+  if (status === "loading") {
+    return <Skeleton lines={6} />;
+  }
+
+  if (status === "error") {
+    return <ErrorState message={error} />;
+  }
+
   return (
-    <div className="page">
-      <h1>Modifier un Entretien</h1>
+    <div className="entretien-form-page">
+      <div className="page-head">
+        <div>
+          <h1>Modifier l'entretien</h1>
+          <p className="text-muted">Mettez à jour les informations de l'entretien.</p>
+        </div>
+      </div>
 
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label>Date</label>
-          <input type="date" {...register("date")} />
-          <p className="error">{errors.date?.message}</p>
+      <form className="form-card" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <div className="form-grid">
+          <Input
+            id="entretien-date"
+            label="Date"
+            type="date"
+            error={errors.date?.message}
+            {...register("date")}
+          />
+
+          <Input
+            id="entretien-heure"
+            label="Heure"
+            type="time"
+            error={errors.heure?.message}
+            {...register("heure")}
+          />
         </div>
 
-        <div className="form-group">
-          <label>Heure</label>
-          <input type="time" {...register("heure")} />
-          <p className="error">{errors.heure?.message}</p>
-        </div>
+        <Input
+          id="entretien-lieu"
+          label="Lieu"
+          placeholder="Ex. Bureau de Paris, visioconférence"
+          error={errors.lieu?.message}
+          {...register("lieu")}
+        />
 
-        <div className="form-group">
-          <label>Lieu</label>
-          <input type="text" {...register("lieu")} />
-          <p className="error">{errors.lieu?.message}</p>
-        </div>
-
-        <div className="form-group">
-          <label>Candidature</label>
-          <select {...register("candidatureId")}>
-            <option value="">
-              Choisir une candidature
+        <Select
+          id="entretien-candidature"
+          label="Candidature concernée"
+          error={errors.candidatureId?.message}
+          {...register("candidatureId")}
+        >
+          <option value="">Choisir une candidature…</option>
+          {candidatures.map((candidature) => (
+            <option key={candidature.id} value={candidature.id}>
+              #{candidature.id} — {candidature.candidat?.prenom} {candidature.candidat?.nom} —{" "}
+              {candidature.offre?.titre}
             </option>
+          ))}
+        </Select>
 
-            {candidatures.map((candidature) => (
-              <option key={candidature.id} value={candidature.id}>
-                {candidature.offre?.titre} - {candidature.candidat?.prenom}{" "}
-                {candidature.candidat?.nom}
-              </option>
-            ))}
-          </select>
-          <p className="error">{errors.candidatureId?.message}</p>
-        </div>
-
-        <div className="form-group">
-          <label>Recruteur</label>
-          <select {...register("recruteurId")}>
-            <option value="">
-              Choisir un recruteur
-            </option>
-
+        {!isRecruteur && (
+          <Select
+            id="entretien-recruteur"
+            label="Recruteur"
+            error={errors.recruteurId?.message}
+            {...register("recruteurId")}
+          >
+            <option value="">Choisir…</option>
             {recruteurs.map((recruteur) => (
               <option key={recruteur.id} value={recruteur.id}>
                 {recruteur.prenom} {recruteur.nom}
               </option>
             ))}
-          </select>
-          <p className="error">{errors.recruteurId?.message}</p>
+          </Select>
+        )}
+        {isRecruteur && (
+          <input type="hidden" {...register("recruteurId")} />
+        )}
+
+        <div className="form-actions">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Enregistrement…" : "Enregistrer"}
+          </Button>
+          <Link to={`/consulter-entretien/${entretienId}`} className="btn btn-secondary">
+            Annuler
+          </Link>
         </div>
-
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
-
-        <Link
-          className="btn-secondary"
-          to={`/consulter-entretien/${entretienId}`}
-        >
-          Retour
-        </Link>
       </form>
     </div>
   );
 }
-
-export default ModifieEntretien;
