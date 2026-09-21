@@ -1,0 +1,47 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* La navbar est en position: fixed (hors du flux) :
+   on réserve son espace via le padding de .app-layout,
+   puis on centre .app-main dans la zone restante. */
+.app-layout {
+  display: flex;
+  flex: 1;
+  padding-top: 64px;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--s5);
+}
+
+.app-loading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: calc(64px + var(--s5)) var(--s5);
+}
+
+@media (min-width: 1024px) {
+  .app-layout {
+    padding-left: 240px;
+  }
+
+  .app-nav-closed .app-layout {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  .app-main {
+    padding: var(--s4);
+  }
+}

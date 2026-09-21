@@ -1,6 +1,16 @@
-function RoleGuard({ children }) {
-  // Security disabled for now (no auth backend yet).
-  // Re-enable when authentication exists.
+import { Navigate } from "react-router-dom";
+import { isAuthenticated, getRole } from "./token";
+import AccessDenied from "./AccessDenied";
+
+function RoleGuard({ allowedRoles, children }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (!allowedRoles.includes(getRole())) {
+    return <AccessDenied />;
+  }
+
   return children;
 }
 
