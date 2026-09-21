@@ -1,0 +1,105 @@
+.notifications-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.notifications-page .page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  transition: background-color 0.15s ease;
+}
+
+.notification-item.is-unread {
+  background: var(--bg-raised);
+  border-left: 4px solid var(--accent);
+}
+
+.notification-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-type {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 600;
+  padding: var(--s1) var(--s2);
+  border-radius: var(--r-full);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.notification-type.type-soumise {
+  background: var(--accent-soft, rgba(0, 0, 0, 0.06));
+  color: var(--accent);
+}
+
+.notification-type.type-consultee {
+  background: rgba(2, 136, 209, 0.12);
+  color: #0277bd;
+}
+
+.notification-type.type-attente {
+  background: rgba(255, 152, 0, 0.14);
+  color: #ef6c00;
+}
+
+.notification-type.type-acceptee {
+  background: rgba(46, 125, 50, 0.14);
+  color: #2e7d32;
+}
+
+.notification-type.type-refusee {
+  background: rgba(198, 40, 40, 0.12);
+  color: #c62828;
+}
+
+.notification-message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.notification-date {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .notification-item {
+    flex-direction: column;
+    gap: var(--s3);
+  }
+}
