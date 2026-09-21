@@ -1,0 +1,114 @@
+/* ============================================================
+   Candidatures — CSS groupé
+   ============================================================
+   Fusion réelle de :
+     - CandidatureForm.css      (Add / Modifie)
+     - CandidaturesList.css     (liste)
+     - ConsulterCandidature.css (consulter)
+   ============================================================ */
+
+/* ---------- Formulaire (Add / Modifie) ---------- */
+.candidature-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  max-width: 640px;
+}
+
+/* ---------- Liste ---------- */
+
+.candidatures-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.candidatures-page .page-toolbar {
+  margin-bottom: var(--s4);
+}
+
+.candidatures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--s5);
+  margin-top: var(--s2);
+  margin-bottom: var(--s4);
+}
+
+.candidature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.candidature-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-pop);
+  transform: translateY(-2px);
+}
+
+.candidature-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.candidature-card-meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* ---------- Consulter ---------- */
+.consulter-candidature-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  max-width: 860px;
+}
+
+.detail-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-bottom: var(--s4);
+}
+
+.detail-card-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.detail-description {
+  margin: var(--s4) 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+.statut-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  margin-top: var(--s4);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--border);
+}
+
+.statut-actions-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: var(--s1);
+}

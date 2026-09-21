@@ -1,136 +1,208 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../api/api";
+import { getApiErrorMessage } from "../../api/api";
+import { getRole } from "../../Components/token";
+import { STATUT_VALUES, STATUT_LABELS } from "../../utils/constants";
+import { formatDate } from "../../utils/format";
+import StatusPill from "../../Components/ui/StatusPill";
+import Select from "../../Components/ui/Select";
+import Skeleton from "../../Components/ui/Skeleton";
+import ErrorState from "../../Components/ui/ErrorState";
+import EmptyState from "../../Components/ui/EmptyState";
+import Pagination from "../../Components/ui/Pagination";
+import ConfirmDialog from "../../Components/ui/ConfirmDialog";
+import Button from "../../Components/ui/Button";
+import "./Candidatures.css";
 
-function CandidaturesList() {
+export default function CandidaturesList() {
+  const role = getRole();
+  const isCandidat = role === "CANDIDAT";
+  const isManagement = role === "ADMIN" || role === "RECRUTEUR";
+
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState("");
   const [candidatures, setCandidatures] = useState([]);
-  const [selectedStatut, setSelectedStatut] = useState("");
+  const [statut, setStatut] = useState("");
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [toDelete, setToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    api.get("/candidatures")
-      .then((res) => setCandidatures(res.data.content))
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  function load() {
+    setStatus("loading");
+    setError("");
 
-  function handleDelete(candidatureId) {
-    const confirmed = window.confirm("Voulez-vous supprimer cette candidature ?");
-
-    if (!confirmed) {
-      return;
-    }
-
-    api.delete(`/candidatures/${candidatureId}`)
-      .then(() => {
-        setCandidatures((currentCandidatures) =>
-          currentCandidatures.filter((candidature) => candidature.id !== candidatureId)
-        );
+    api
+      .get("/candidatures", { params: { page: 0, size: 50 } })
+      .then(function (response) {
+        setCandidatures(response.data.content || []);
+        setStatus("success");
       })
-      .catch((error) => {
-        console.log(error);
-        alert("La suppression a échoué.");
+      .catch(function (reason) {
+        setError(getApiErrorMessage(reason));
+        setStatus("error");
       });
   }
 
-  const allStatuts = candidatures.map((candidature) => {
-    return candidature.statut;
-  });
+  useEffect(load, []);
 
-  const uniqueStatuts = allStatuts.filter((statut, index) => {
-    return allStatuts.indexOf(statut) === index;
-  });
+  const filtered = statut
+    ? candidatures.filter((candidature) => candidature.statut === statut)
+    : candidatures;
 
-  let displayedCandidatures = candidatures;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / size));
+  const currentPage = Math.min(page, totalPages - 1);
+  const visible = filtered.slice(currentPage * size, currentPage * size + size);
 
-  if (selectedStatut !== "") {
-    displayedCandidatures = candidatures.filter((candidature) => {
-      return candidature.statut === selectedStatut;
-    });
+  function handleDelete() {
+    if (!toDelete) return;
+
+    setDeleting(true);
+    api
+      .delete("/candidatures/" + toDelete.id)
+      .then(function () {
+        setCandidatures((current) => current.filter((c) => c.id !== toDelete.id));
+        toast.success("Candidature supprimée");
+        setToDelete(null);
+      })
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "La suppression a échoué."));
+      })
+      .finally(function () {
+        setDeleting(false);
+      });
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1>Liste des Candidatures</h1>
+    <div className="candidatures-page">
+      <div className="page-head">
+        <div>
+          <h1>{isCandidat ? "Mes candidatures" : "Candidatures"}</h1>
+          <p className="text-muted">
+            {isCandidat
+              ? "Suivez l'état de vos candidatures."
+              : "Consultez les candidatures qui vous concernent."}
+          </p>
+        </div>
+      </div>
 
-        <Link className="btn-primary" to="/add-candidature">
-          + Ajouter
-        </Link>
-
-        <select
-          value={selectedStatut}
-          onChange={(e) => setSelectedStatut(e.target.value)}
+      <div className="page-toolbar">
+        <Select
+          id="candidatures-statut"
+          label="Filtrer par statut"
+          value={statut}
+          onChange={(event) => {
+            setStatut(event.target.value);
+            setPage(0);
+          }}
         >
-          <option value="">Tous les statuts</option>
-
-          {uniqueStatuts.map((statut, index) => {
-            return <option key={index} value={statut}>{statut}</option>;
-          })}
-        </select>
+          <option value="">Tous</option>
+          {STATUT_VALUES.map((value) => (
+            <option key={value} value={value}>
+              {STATUT_LABELS[value]}
+            </option>
+          ))}
+        </Select>
       </div>
 
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Date</th>
-              <th>Statut</th>
-              <th>Candidat</th>
-              <th>Offre</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+      {status === "loading" && <Skeleton lines={5} />}
 
-          <tbody>
-            {candidatures.length > 0 ? (
-              displayedCandidatures.map((candidature) => (
-                <tr key={candidature.id}>
-                  <td>{candidature.id}</td>
-                  <td>{candidature.dateCandidature}</td>
-                  <td>{candidature.statut}</td>
-                  <td>
-                    {candidature.candidat?.prenom} {candidature.candidat?.nom}
-                  </td>
-                  <td>{candidature.offre?.titre}</td>
+      {status === "error" && <ErrorState message={error} onRetry={load} />}
 
-                  <td className="table-actions">
-                    <Link
-                      className="btn-view"
-                      to={`/consulter-candidature/${candidature.id}`}
+      {status === "success" && visible.length === 0 && (
+        <EmptyState
+          title={isCandidat ? "Aucune candidature" : "Aucune candidature trouvée"}
+          message={
+            isCandidat
+              ? "Parcourez les offres disponibles et postulez."
+              : "Changez de filtre pour voir plus de résultat."
+          }
+          action={
+            isCandidat && (
+              <Link to="/jobs" className="btn btn-primary">
+                Voir les offres
+              </Link>
+            )
+          }
+        />
+      )}
+
+      {status === "success" && visible.length > 0 && (
+        <>
+          <div className="candidatures-grid">
+            {visible.map((candidature) => (
+              <article key={candidature.id} className="candidature-card">
+                <StatusPill status={candidature.statut} />
+
+                <h3 className="candidature-card-title">
+                  <Link to={`/jobs/${candidature.offre?.id}`} className="table-link">
+                    {candidature.offre?.titre || "—"}
+                  </Link>
+                </h3>
+
+                <p className="candidature-card-meta">
+                  {`Postulé le ${formatDate(candidature.dateCandidature)}`}
+                  {!isCandidat &&
+                    candidature.candidat &&
+                    ` · ${candidature.candidat.prenom} ${candidature.candidat.nom}`}
+                </p>
+
+                <div className="job-card-actions">
+                  <Link
+                    to={`/consulter-candidature/${candidature.id}`}
+                    className="btn btn-secondary btn-sm btn-icon"
+                    title="Consulter"
+                    aria-label="Consulter la candidature"
+                  >
+                    <VisibilityIcon />
+                  </Link>
+                  {isManagement && (
+                    <Button
+                      variant="danger-solid"
+                      size="sm"
+                      className="btn-icon"
+                      title="Supprimer"
+                      aria-label="Supprimer la candidature"
+                      onClick={() => setToDelete(candidature)}
                     >
-                      Consulter
-                    </Link>
+                      <DeleteIcon />
+                    </Button>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
 
-                    <Link
-                      className="btn-edit"
-                      to={`/update-candidature/${candidature.id}`}
-                    >
-                      Modifier
-                    </Link>
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            size={size}
+            onPageChange={setPage}
+            onSizeChange={(next) => {
+              setSize(next);
+              setPage(0);
+            }}
+          />
+        </>
+      )}
 
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(candidature.id)}
-                    >
-                      Supprimer
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6">
-                  Aucune candidature trouvée.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <ConfirmDialog
+        open={Boolean(toDelete)}
+        title="Supprimer la candidature"
+        message={
+          toDelete
+            ? `Voulez-vous vraiment supprimer la candidature à l'offre « ${toDelete.offre?.titre || ""} » ?`
+            : ""
+        }
+        confirmLabel="Supprimer"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setToDelete(null)}
+      />
     </div>
   );
 }
-
-export default CandidaturesList;

@@ -1,23 +1,35 @@
 import { Link } from "react-router-dom";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import { getRole } from "../../Components/token";
 
-function CandidatureActions() {
+export default function CandidatureActions() {
+  const isAdmin = getRole() === "ADMIN";
+
   return (
-    <div className="page">
-      <h1>Gestion des Candidatures</h1>
+    <div className="actions-page">
+      <div className="page-head">
+        <div>
+          <h1>Gestion des candidatures</h1>
+          <p className="text-muted">Choisissez une opération.</p>
+        </div>
+      </div>
 
-      <div className="cards-actions">
-        <Link className="action-card" to="/candidatures">
-          <h2>Liste des Candidatures</h2>
-          <p>Afficher toutes les candidatures.</p>
+      <div className="actions-grid">
+        <Link to="/candidatures" className="action-card">
+          <AssignmentIcon className="action-card-icon" />
+          <h2>Liste des candidatures</h2>
+          <p>Afficher et traiter les candidatures reçues.</p>
         </Link>
 
-        <Link className="action-card" to="/add-candidature">
-          <h2>Ajouter une Candidature</h2>
-          <p>Créer une nouvelle candidature.</p>
-        </Link>
+        {isAdmin && (
+          <Link to="/add-candidature" className="action-card">
+            <AddBoxIcon className="action-card-icon" />
+            <h2>Nouvelle candidature</h2>
+            <p>Saisir manuellement une candidature.</p>
+          </Link>
+        )}
       </div>
     </div>
   );
 }
-
-export default CandidatureActions;
