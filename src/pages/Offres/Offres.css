@@ -1,0 +1,315 @@
+/* ============================================================
+   Offres — CSS groupé (concaténation littérale programmatique)
+   Fusion de :
+     - ConsulterOffre.css
+     - OffreForm.css
+     - OffrePublique.css
+     - OffresList.css
+     - OffresPubliques.css
+   ============================================================ */
+
+/* ---------- ConsulterOffre.css ---------- */
+.consulter-offre-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  max-width: 980px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  margin-bottom: var(--s2);
+  color: var(--accent-hover);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+.page-head h1 {
+  margin: 0 0 var(--s3);
+}
+
+.badges {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.description {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-bottom: var(--s4);
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.candidatures-liste {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--border);
+}
+
+.candidature-row:first-child {
+  border-top: none;
+}
+
+.candidature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+}
+
+.candidature-actions {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+/* ---------- OffreForm.css ---------- */
+.offre-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  max-width: 720px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s3);
+}
+
+@media (max-width: 575px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- OffrePublique.css ---------- */
+.job-detail-page {
+  padding-top: var(--s5);
+  padding-bottom: var(--s8);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  margin-bottom: var(--s4);
+  color: var(--accent-hover);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+.job-detail {
+  padding: var(--s6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg-raised);
+}
+
+.job-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s5);
+  padding-bottom: var(--s5);
+  border-bottom: 1px solid var(--border);
+}
+
+.job-detail-title-block h1 {
+  margin: 0 0 var(--s3);
+  font-size: 28px;
+}
+
+.job-detail-badges {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.job-detail-actions {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.job-detail-actions .btn {
+  white-space: normal;
+  height: auto;
+  min-height: 38px;
+  line-height: 1.3;
+  padding-top: var(--s2);
+  padding-bottom: var(--s2);
+  text-align: center;
+}
+
+.job-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s4);
+  margin: 0 0 var(--s5);
+}
+
+.job-detail-meta div {
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+}
+
+.job-detail-meta dt {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: var(--s1);
+}
+
+.job-detail-meta dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.job-detail-section h2 {
+  margin: 0 0 var(--s3);
+  font-size: 18px;
+}
+
+.job-detail-section p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+@media (max-width: 767px) {
+  .job-detail {
+    padding: var(--s4);
+  }
+
+  .job-detail-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- OffresList.css ---------- */
+.offres-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.offres-list-page .page-toolbar {
+  margin-bottom: var(--s4);
+}
+
+.offres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--s5);
+  margin-top: var(--s2);
+  margin-bottom: var(--s4);
+}
+
+/* ---------- OffresPubliques.css ---------- */
+.jobs-page {
+  padding-top: var(--s6);
+  padding-bottom: var(--s8);
+}
+
+.jobs-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  margin-bottom: var(--s5);
+}
+
+.jobs-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.jobs-header p {
+  margin: 0;
+}
+
+.jobs-toolbar {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s4);
+}
+
+.jobs-toolbar .search-bar {
+  flex: 1 1 260px;
+}
+
+.jobs-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  min-width: 220px;
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--s5);
+  margin-top: var(--s4);
+  margin-bottom: var(--s5);
+}
+
+@media (max-width: 767px) {
+  .jobs-toolbar {
+    flex-direction: column;
+  }
+
+  .jobs-filters {
+    width: 100%;
+  }
+}
