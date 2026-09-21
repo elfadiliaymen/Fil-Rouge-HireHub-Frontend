@@ -1,23 +1,51 @@
 import { Link } from "react-router-dom";
+import PeopleIcon from "@mui/icons-material/People";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
-function UserActions() {
+const ACTIONS = [
+  {
+    to: "/users",
+    title: "Liste des utilisateurs",
+    text: "Afficher et gérer tous les comptes.",
+    icon: PeopleIcon,
+  },
+  {
+    to: "/add-user",
+    title: "Nouvel utilisateur",
+    text: "Créer un compte (admin, recruteur, candidat).",
+    icon: PersonAddIcon,
+  },
+  {
+    to: "/dashboard",
+    title: "Tableau de bord",
+    text: "Voir les statistiques de la plateforme.",
+    icon: DashboardIcon,
+  },
+];
+
+export default function UserActions() {
   return (
-    <div className="page">
-      <h1>Gestion des Utilisateurs</h1>
+    <div className="actions-page">
+      <div className="page-head">
+        <div>
+          <h1>Gestion des utilisateurs</h1>
+          <p className="text-muted">Choisissez une opération.</p>
+        </div>
+      </div>
 
-      <div className="cards-actions">
-        <Link className="action-card" to="/users">
-          <h2>Liste des Utilisateurs</h2>
-          <p>Afficher tous les utilisateurs.</p>
-        </Link>
-
-        <Link className="action-card" to="/add-user">
-          <h2>Ajouter un Utilisateur</h2>
-          <p>Créer un nouvel utilisateur.</p>
-        </Link>
+      <div className="actions-grid">
+        {ACTIONS.map((action) => {
+          const Icon = action.icon;
+          return (
+            <Link key={action.to} to={action.to} className="action-card">
+              <Icon className="action-card-icon" />
+              <h2>{action.title}</h2>
+              <p>{action.text}</p>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
 }
-
-export default UserActions;
