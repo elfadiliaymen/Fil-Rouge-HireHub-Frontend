@@ -1,0 +1,43 @@
+:root {
+  /* Fonds — dégradés de blanc (équivalent « grades » du sombre) */
+  --bg:             #ffffff;   /* fond de page — blanc pur */
+  --bg-subtle:      #f0f0f0;   /* zones alternées, en-têtes de tableau, panneaux */
+  --bg-raised:      #f7f7f7;   /* cartes, modales, menus */
+  --bg-hover:       #ececec;   /* survol de ligne / de carte */
+  --bg-input:       #ffffff;   /* champs de saisie */
+
+  /* Bordures */
+  --border:         #e2e2e2;   /* bordure fine standard — s'allume en orange au survol */
+  --border-strong:  #888888;   /* champs, séparateurs forts */
+
+  /* Texte */
+  --ink:            #1a1a1a;   /* texte principal */
+  --ink-muted:      #666666;   /* texte secondaire, métadonnées */
+  --ink-faint:      #8a8a8a;   /* placeholders, texte atténué */
+
+  /* Accent — l'Orange tube (identique au thème sombre) */
+  --accent:         #ff9000;
+  --accent-hover:   #e07b00;   /* survol liens/boutons, focus */
+  --accent-soft:    rgba(255, 144, 0, 0.18);   /* fond d'état actif, halo focus */
+  --accent-ink:     #141414;   /* texte sur fond accent */
+
+  /* Statuts — lisibles sur fond blanc */
+  --ok:             #2e7d3f;   --ok-soft:     rgba(46, 125, 63, 0.14);
+  --warn:           #9a6a00;   --warn-soft:   rgba(154, 106, 0, 0.14);
+  --danger:         #c23934;   --danger-soft: rgba(194, 57, 52, 0.13);
+  --danger-hover:   #a02d2a;   /* survol des actions destructives pleines */
+
+  /* Neutre pur — texte sur fond saturé (danger plein) */
+  --white:          #ffffff;
+
+  /* Rayons — aucun (coins carrés) */
+  --r-sm: 0px;  --r-md: 0px;  --r-lg: 0px;
+
+  /* Ombres — nettes sur fond blanc */
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* Espacement (inchangé) */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --s7:48px; --s8:64px; --s9:96px;
+}

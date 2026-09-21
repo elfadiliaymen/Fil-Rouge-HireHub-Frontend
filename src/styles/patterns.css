@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Patterns — langage graphique de composition (aucun contenu propre)
+
+   Règles génériques réutilisables, appliquées sur les écrans réels de
+   HireHub. Couleurs exclusivement via les variables de tokens.css.
+   ========================================================================== */
+
+/* 2.1 — Titre de section centré avec trait d'accent */
+.section-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: var(--s2);
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  margin: var(--s3) auto 0;
+  border-radius: var(--r-sm);
+}
+
+/* 2.2 — Badge plein (label fort, fond sombre) */
+.badge-solid {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--bg-raised);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: var(--s2) var(--s4);
+  border-radius: var(--r-sm);
+}
+
+/* 2.3 — Cadre décalé (bloc avec bordure en retrait derrière) */
+.framed-block {
+  position: relative;
+  display: inline-block;
+}
+
+.framed-block::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  z-index: 0;
+}
+
+.framed-block > * {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--r-md);
+}
+
+/* 2.4 — Grille de cartes uniformes (sans bordure, fond surélevé) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s5);
+}
+
+.card-grid .card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.card-grid .card .card-title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  padding: var(--s4) var(--s4) 0;
+}
+
+.card-grid .card .card-body {
+  font-size: 13px;
+  color: var(--ink-muted);
+  padding: var(--s2) var(--s4) var(--s4);
+}
+
+/* 2.5 — Bandeau d'appel à l'action (borduré haut/bas) */
+.cta-band {
+  background: var(--bg-subtle);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  color: var(--ink);
+  text-align: center;
+  padding: var(--s8) var(--s5);
+}
+
+.cta-band .section-title,
+.cta-band h2 {
+  color: var(--ink);
+}
+
+.cta-band .section-title::after {
+  background: var(--accent);
+}
+
+.cta-band p {
+  margin: var(--s3) 0 0;
+  color: var(--ink-muted);
+}
+
+.cta-band .btn-group {
+  display: flex;
+  justify-content: center;
+  gap: var(--s3);
+  margin-top: var(--s5);
+  flex-wrap: wrap;
+}
+
+.cta-band .btn-group .btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.cta-band .btn-group .btn-primary:hover {
+  background: var(--accent-hover);
+  color: var(--accent-ink);
+}
+
+.cta-band .btn-group .btn-secondary {
+  background: var(--bg-raised);
+  color: var(--ink);
+}
+
+.cta-band .btn-group .btn-secondary:hover {
+  background: var(--bg-hover);
+  color: var(--ink);
+}

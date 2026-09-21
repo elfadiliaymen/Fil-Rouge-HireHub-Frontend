@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Base — reset + typographie
+
+   Familles :
+   - Inter 400/500/600 : toute l'interface.
+   - Source Serif 4 600 : uniquement les titres de la landing page
+     (class .font-serif / titres de hero et sections publiques).
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 var(--s3);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+p {
+  margin: 0 0 var(--s4);
+}
+
+a {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Longueur de ligne maximale du texte courant */
+.text-measure {
+  max-width: 70ch;
+}
+
+/* Titres de la landing page (hero + sections publiques) */
+.font-serif {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+/* Focus clavier visible partout */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Logo tube : texte blanc, marque en orange */
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.logo:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+/* Menus natifs sombres */
+select option {
+  background: var(--bg-raised);
+  color: var(--ink);
+}
+
+/* Lien d'évitement */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  z-index: 2000;
+  padding: var(--s3) var(--s4);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* Accessibilité : réduire les animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
