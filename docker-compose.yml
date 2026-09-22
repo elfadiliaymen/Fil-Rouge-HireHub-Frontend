@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8090/api}
+    container_name: hirehub-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
