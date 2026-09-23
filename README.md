@@ -87,25 +87,6 @@ cd Fil-Rouge-HireHub-Frontend/hirehub-frontend
 npm install
 ```
 
----
-
-## 6.5 Variables d'environnement
-
-Copier le fichier `.env.example` vers `.env` :
-
-```bash
-copy .env.example .env
-```
-
-Compléter ensuite la valeur dans le fichier `.env` :
-
-```env
-VITE_API_URL=http://localhost:8090/api
-```
-
-> ⚠️ Ne jamais publier ce fichier `.env`, et redémarrer le serveur après toute modification.
-
----
 
 ## 6.6 Lancer le projet
 
