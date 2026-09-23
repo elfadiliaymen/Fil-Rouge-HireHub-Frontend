@@ -7,7 +7,7 @@
   --bg-input:       #ffffff;   /* champs de saisie */
 
   /* Bordures */
-  --border:         #e2e2e2;   /* bordure fine standard — s'allume en orange au survol */
+  --border:         #e2e2e2;   /* bordure fine standard — s'allume en violet au survol */
   --border-strong:  #888888;   /* champs, séparateurs forts */
 
   /* Texte */
@@ -15,11 +15,11 @@
   --ink-muted:      #666666;   /* texte secondaire, métadonnées */
   --ink-faint:      #8a8a8a;   /* placeholders, texte atténué */
 
-  /* Accent — l'Orange tube (identique au thème sombre) */
-  --accent:         #ff9000;
-  --accent-hover:   #e07b00;   /* survol liens/boutons, focus */
-  --accent-soft:    rgba(255, 144, 0, 0.18);   /* fond d'état actif, halo focus */
-  --accent-ink:     #141414;   /* texte sur fond accent */
+  /* Accent — Violet */
+  --accent:         #7c3aed;
+  --accent-hover:   #6d28d9;   /* survol liens/boutons, focus */
+  --accent-soft:    rgba(124, 58, 237, 0.14);   /* fond d'état actif, halo focus */
+  --accent-ink:     #ffffff;   /* texte sur fond accent */
 
   /* Statuts — lisibles sur fond blanc */
   --ok:             #2e7d3f;   --ok-soft:     rgba(46, 125, 63, 0.14);

@@ -5,7 +5,7 @@ import api from "../api/api";
 import { getApiErrorMessage } from "../api/api";
 import { getRole } from "../Components/token";
 import { formatDate, isExpiringSoon } from "../utils/format";
-import { CONTRAT_LABELS } from "../utils/constants";
+import { ROLE_LABELS, CONTRAT_LABELS } from "../utils/constants";
 import StatCard from "../Components/ui/StatCard";
 import StatusPill from "../Components/ui/StatusPill";
 import Table from "../Components/ui/Table";
@@ -195,7 +195,11 @@ export default function Dashboard() {
                     </Link>
                   </td>
                   <td>{user.email}</td>
-                  <td>{user.role}</td>
+                  <td>
+                    <span className="badge badge-accent">
+                      {ROLE_LABELS[user.role] || user.role}
+                    </span>
+                  </td>
                   <td className="table-actions-col">
                     <Link
                       to={`/consulter-user/${user.id}`}

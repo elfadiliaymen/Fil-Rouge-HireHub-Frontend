@@ -49,6 +49,13 @@
 .section-head .section-title {
   margin: 0;
   font-size: 22px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.section-head .section-title::after {
+  display: none;
 }
 
 .section-head .btn {

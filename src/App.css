@@ -78,11 +78,6 @@ select {
   margin-bottom: 0;
 }
 
-.page-header .btn-primary {
-  width: auto;
-  margin: 0;
-}
-
 /* ======================================================
    HEADER
 ====================================================== */
@@ -330,103 +325,12 @@ select {
   resize: vertical;
 }
 
-.auth-form .btn-primary {
-  width: 100%;
-  margin: 5px 0 0;
-}
-
 .error {
   font-size: 13px;
 }
 
 .error-root {
   text-align: center;
-}
-
-/* ======================================================
-   BUTTONS
-====================================================== */
-
-.btn-primary {
-  width: 170px;
-  padding: 10px 20px;
-  margin: 15px auto 0;
-  border: 1px solid;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  width: 170px;
-  padding: 10px 20px;
-  margin: 15px auto 0;
-  border: 1px solid;
-  cursor: pointer;
-  text-align: center;
-}
-
-.btn-view {
-  padding: 6px 12px;
-  border: 1px solid;
-  cursor: pointer;
-}
-
-.btn-edit {
-  padding: 6px 12px;
-  border: 1px solid;
-  cursor: pointer;
-}
-
-.btn-toggle {
-  padding: 6px 12px;
-  border: 1px solid;
-  cursor: pointer;
-}
-
-.btn-delete {
-  padding: 6px 12px;
-  border: 1px solid;
-  cursor: pointer;
-}
-
-/* ======================================================
-   TABLE
-====================================================== */
-
-.table-container {
-  width: 100%;
-  margin-top: 20px;
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table caption {
-  padding: 12px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.table thead th {
-  padding: 14px;
-  border: 1px solid;
-  text-align: left;
-  font-weight: bold;
-}
-
-.table tbody td {
-  padding: 14px;
-  border: 1px solid;
-}
-
-.table-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
 }
 
 /* ======================================================
