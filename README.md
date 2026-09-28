@@ -6,11 +6,9 @@
 
 # 2. Présentation du projet
 
-Ce projet est une **application web** (interface utilisateur) de la plateforme de recrutement HireHub. Elle s'adresse principalement aux **recruteurs** qui veulent publier des offres et suivre les candidatures, ainsi qu'aux **candidats** qui recherchent un emploi et déposent leur CV.
+Le frontend HireHub est une application web moderne développée avec React, destinée à offrir une expérience utilisateur claire et efficace pour les recruteurs et les candidats. L'interface se connecte au backend via API REST, protège les routes selon les rôles et fournit des composants réutilisables pour les tableaux, formulaires et notifications.
 
-Son objectif principal est de **fournir une interface claire et simple**, connectée à l'API HireHub, pour permettre à chacun de gérer les offres d'emploi, les CV, les candidatures et les entretiens sans connaissance technique.
-
-L'application est développée avec **React** et la bibliothèque de composants **Material UI**, et elle communique avec le backend via **Axios**.
+L'architecture vise la performance en développement (Vite), la maintenabilité des composants (Material UI) et la qualité du code via outils d'analyse et pipelines CI.
 
 ---
 
@@ -38,16 +36,17 @@ La solution proposée permet de **regrouper toutes les opérations dans une seul
 
 | Technologie | Utilisation dans le projet |
 |-------------|----------------------------|
-| React 19 | Développement de l'interface utilisateur |
-| Vite 8 | Outil de développement et de compilation du projet |
-| Material UI (MUI) | Bibliothèque de composants graphiques (boutons, tableaux, formulaires) |
-| Axios | Envoi des requêtes HTTP vers l'API backend |
-| React Router | Gestion de la navigation entre les pages |
-| React Hook Form + Yup | Création des formulaires et validation des données saisies |
-| react-toastify | Affichage des notifications (succès, erreur, information) |
-| jwt-decode | Lecture du contenu du jeton JWT côté client |
-| Oxlint | Vérification du code (linter) |
-| Docker / Nginx | Empaquetage et service de l'application en production |
+| React 19 | Framework principal pour construire l'interface et les composants réutilisables |
+| Vite 8 | Outil de développement rapide, bundling et hot-reload |
+| Material UI (MUI) | Bibliothèque de composants accessibles et thémables |
+| Axios | Client HTTP pour communiquer avec le backend REST |
+| React Router | Gestion du routage et des navigations côté client |
+| React Hook Form + Yup | Gestion des formulaires et validation déclarative |
+| react-toastify | Affichage des notifications utilisateur (succès, erreurs) |
+| jwt-decode | Lecture du contenu des tokens JWT côté client pour gestion de sessions |
+| ESLint / Oxlint | Analyse statique et règles de qualité du code |
+| Docker / Nginx | Conteneurisation et distribution en production |
+| SonarQube | Analyse continue de la qualité du code, couverture et dette technique |
 
 ---
 
