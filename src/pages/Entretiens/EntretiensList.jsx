@@ -5,28 +5,31 @@ import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { formatDate, formatDateTime } from "../../utils/format";
-import { getRole, getUserId } from "../../Components/token";
-import Table from "../../Components/ui/Table";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import EmptyState from "../../Components/ui/EmptyState";
-import ConfirmDialog from "../../Components/ui/ConfirmDialog";
-import Button from "../../Components/ui/Button";
-import "./Entretiens.css";
+import { getRole, getUserId } from "../../component/token";
+import Table from "../../component/ui/Table";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import EmptyState from "../../component/ui/EmptyState";
+import ConfirmDialog from "../../component/ui/ConfirmDialog";
+import Button from "../../component/ui/Button";
 
 export default function EntretiensList() {
   const role = getRole();
   const userId = getUserId();
   const isAdmin = role === "ADMIN";
+  const isRecruteur = role === "RECRUTEUR";
+  const isCandidat = role === "CANDIDAT";
 
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [entretiens, setEntretiens] = useState([]);
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [marking, setMarking] = useState(null);
 
   function load() {
     setStatus("loading");
@@ -51,7 +54,7 @@ export default function EntretiensList() {
   useEffect(load, [role, userId]);
 
   const canManageEntretien = (entretien) =>
-    isAdmin || Number(entretien.recruteur?.id) === Number(userId);
+    isAdmin || (isRecruteur && Number(entretien.recruteur?.id) === Number(userId));
 
   function handleDelete() {
     if (!toDelete) return;
@@ -72,6 +75,25 @@ export default function EntretiensList() {
       });
   }
 
+  function handleMarkPassed(entretien) {
+    if (!entretien || entretien.statut === "REUSSI") return;
+    setMarking(entretien.id);
+
+    api
+      .patch(`/entretiens/${entretien.id}/resultat/REUSSI`)
+      .then(function (response) {
+        const updated = response.data;
+        setEntretiens((current) => current.map((e) => (e.id === updated.id ? updated : e)));
+        toast.success("Entretien marqué comme réussi");
+      })
+      .catch(function (reason) {
+        toast.error(getApiErrorMessage(reason, "La mise à jour a échoué."));
+      })
+      .finally(function () {
+        setMarking(null);
+      });
+  }
+
   const columns = [
     { key: "datetime", label: "Date" },
     { key: "lieu", label: "Lieu" },
@@ -84,12 +106,18 @@ export default function EntretiensList() {
     <div className="entretiens-page">
       <div className="page-head">
         <div>
-          <h1>Entretiens</h1>
-          <p className="text-muted">Planifiez et suivez vos entretiens.</p>
+          <h1>{isCandidat ? "Mes entretiens" : "Entretiens"}</h1>
+          <p className="text-muted">
+            {isCandidat
+              ? "Consultez les entretiens planifiés pour vos candidatures."
+              : "Planifiez et suivez vos entretiens."}
+          </p>
         </div>
-        <Link to="/add-entretien" className="btn btn-primary">
-          <AddIcon /> Planifier
-        </Link>
+        {!isCandidat && (
+          <Link to="/add-entretien" className="btn btn-primary">
+            <AddIcon /> Planifier
+          </Link>
+        )}
       </div>
 
       {status === "loading" && <Skeleton lines={5} />}
@@ -98,12 +126,18 @@ export default function EntretiensList() {
 
       {status === "success" && entretiens.length === 0 && (
         <EmptyState
-          title="Aucun entretien"
-          message="Planifiez un entretien à partir d'une candidature."
+          title={isCandidat ? "Aucun entretien" : "Aucun entretien"}
+          message={
+            isCandidat
+              ? "Aucun entretien n'est planifié pour le moment."
+              : "Planifiez un entretien à partir d'une candidature."
+          }
           action={
-            <Link to="/add-entretien" className="btn btn-primary">
-              Planifier
-            </Link>
+            !isCandidat && (
+              <Link to="/add-entretien" className="btn btn-primary">
+                Planifier
+              </Link>
+            )
           }
         />
       )}
@@ -118,7 +152,14 @@ export default function EntretiensList() {
                 </Link>
               </td>
               <td>{entretien.lieu}</td>
-              <td>#{entretien.candidatureId}</td>
+              <td>
+                <Link
+                  to={`/consulter-candidature/${entretien.candidatureId}`}
+                  className="table-link"
+                >
+                  #{entretien.candidatureId}
+                </Link>
+              </td>
               <td>
                 {entretien.recruteur
                   ? `${entretien.recruteur.prenom} ${entretien.recruteur.nom}`
@@ -143,6 +184,19 @@ export default function EntretiensList() {
                     >
                       <EditIcon />
                     </Link>
+
+                    <Button
+                      variant="success-solid"
+                      size="sm"
+                      className="btn-icon"
+                      title="Marquer réussi"
+                      aria-label="Marquer l'entretien comme réussi"
+                      onClick={() => handleMarkPassed(entretien)}
+                      disabled={entretien.statut === "REUSSI" || marking === entretien.id}
+                    >
+                      <CheckCircleIcon />
+                    </Button>
+
                     <Button
                       variant="danger-solid"
                       size="sm"
