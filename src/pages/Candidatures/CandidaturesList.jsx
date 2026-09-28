@@ -2,21 +2,22 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole } from "../../Components/token";
+import { getRole } from "../../component/token";
 import { STATUT_VALUES, STATUT_LABELS } from "../../utils/constants";
 import { formatDate } from "../../utils/format";
-import StatusPill from "../../Components/ui/StatusPill";
-import Select from "../../Components/ui/Select";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import EmptyState from "../../Components/ui/EmptyState";
-import Pagination from "../../Components/ui/Pagination";
-import ConfirmDialog from "../../Components/ui/ConfirmDialog";
-import Button from "../../Components/ui/Button";
-import "./Candidatures.css";
+import { downloadCv } from "../../utils/download";
+import StatusPill from "../../component/ui/StatusPill";
+import Select from "../../component/ui/Select";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import EmptyState from "../../component/ui/EmptyState";
+import Pagination from "../../component/ui/Pagination";
+import ConfirmDialog from "../../component/ui/ConfirmDialog";
+import Button from "../../component/ui/Button";
 
 export default function CandidaturesList() {
   const role = getRole();
@@ -160,6 +161,22 @@ export default function CandidaturesList() {
                   >
                     <VisibilityIcon />
                   </Link>
+                  {candidature.cv && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="btn-icon"
+                      title="Télécharger le CV"
+                      aria-label="Télécharger le CV"
+                      onClick={() =>
+                        downloadCv(candidature.cv.id, candidature.cv.nomFichier).catch(function (reason) {
+                          toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
+                        })
+                      }
+                    >
+                      <DownloadIcon />
+                    </Button>
+                  )}
                   {isManagement && (
                     <Button
                       variant="danger-solid"

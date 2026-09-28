@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import WorkIcon from "@mui/icons-material/Work";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import { getRole } from "../../Components/token";
+import { getRole } from "../../component/token";
 
 export default function OffreActions() {
   const isManagement = getRole() === "ADMIN" || getRole() === "RECRUTEUR";

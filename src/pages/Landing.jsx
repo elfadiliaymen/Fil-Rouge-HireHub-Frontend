@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import "./Landing.css";
 
 const STATS = [
   { value: "120+", label: "Offres actives" },
@@ -18,8 +17,8 @@ const ROLES = [
   {
     title: "Recruteur",
     points: ["Publiez vos offres", "Recevez les candidatures", "Planifiez les entretiens"],
-    cta: "Créer un compte recruteur",
-    to: "/auth?mode=register&role=RECRUTEUR",
+    cta: "Accéder à son espace",
+    to: "/auth",
   },
   {
     title: "Administrateur",

@@ -3,10 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getUserId } from "../../Components/token";
-import FileUpload from "../../Components/ui/FileUpload";
-import Button from "../../Components/ui/Button";
-import "./Cvs.css";
+import { getUserId } from "../../component/token";
+import FileUpload from "../../component/ui/FileUpload";
+import Button from "../../component/ui/Button";
 
 function uploadFiles(userId, files, onProgress) {
   let request = null;

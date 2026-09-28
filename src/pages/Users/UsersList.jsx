@@ -9,16 +9,15 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getUserId } from "../../Components/token";
+import { getUserId } from "../../component/token";
 import { ROLE_LABELS } from "../../utils/constants";
-import Table from "../../Components/ui/Table";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import EmptyState from "../../Components/ui/EmptyState";
-import Pagination from "../../Components/ui/Pagination";
-import ConfirmDialog from "../../Components/ui/ConfirmDialog";
-import Button from "../../Components/ui/Button";
-import "./Users.css";
+import Table from "../../component/ui/Table";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import EmptyState from "../../component/ui/EmptyState";
+import Pagination from "../../component/ui/Pagination";
+import ConfirmDialog from "../../component/ui/ConfirmDialog";
+import Button from "../../component/ui/Button";
 
 export default function UsersList() {
   const [status, setStatus] = useState("loading");

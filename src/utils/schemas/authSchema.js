@@ -10,7 +10,7 @@ export const registerSchema = yup.object({
   prenom: yup.string().trim().required("Le prénom est requis."),
   role: yup
     .string()
-    .oneOf(["CANDIDAT", "RECRUTEUR"], "Rôle invalide.")
+    .oneOf(["CANDIDAT"], "Rôle invalide.")
     .required("Choisissez un rôle."),
   email: yup.string().trim().email("Adresse email invalide.").required("L'email est requis."),
   password: yup

@@ -5,10 +5,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { formatDate } from "../../utils/format";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import Button from "../../Components/ui/Button";
-import "./Cvs.css";
+import { downloadCv } from "../../utils/download";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import Button from "../../component/ui/Button";
 
 export default function ConsulterCv() {
   const { cvId } = useParams();
@@ -35,21 +35,9 @@ export default function ConsulterCv() {
   useEffect(load, [cvId]);
 
   function handleDownload() {
-    api
-      .get("/cv/download/" + cv.id, { responseType: "blob" })
-      .then(function (response) {
-        const url = window.URL.createObjectURL(response.data);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = cv.nomFichier || "cv.pdf";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(function (reason) {
-        toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
-      });
+    downloadCv(cv.id, cv.nomFichier || "cv.pdf").catch(function (reason) {
+      toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
+    });
   }
 
   if (status === "loading") {

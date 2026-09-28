@@ -1,0 +1,924 @@
+/* ==========================================================
+   Shared UI components (component/ui)
+   ========================================================== */
+
+/* ---- Components\ui\ActiveFilterChips.css ---- */
+.active-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: 2px 6px 2px 10px;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.active-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--accent-hover);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.active-chip-remove:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.active-filters-clear {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.active-filters-clear:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+/* ---- Components\ui\Badge.css ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.badge-accent {
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.badge-success {
+  color: var(--ok);
+  background: var(--ok-soft);
+  border-color: transparent;
+}
+
+.badge-warn {
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-color: transparent;
+}
+
+.badge-danger {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-color: transparent;
+}
+
+/* ---- Components\ui\Button.css ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  height: 38px;
+  padding: 0 var(--s4);
+  border: 0;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn .MuiSvgIcon-root {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+.btn-icon .MuiSvgIcon-root {
+  display: block;
+  font-size: 18px;
+  line-height: 0;
+}
+
+.btn-sm.btn-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+}
+
+.btn-sm:not(.btn-icon) .MuiSvgIcon-root {
+  font-size: 15px;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn-primary:hover {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+  color: var(--accent-ink);
+}
+
+.btn-secondary {
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+
+.btn-subtle {
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.btn-subtle:hover {
+  background: var(--bg-hover);
+  color: var(--ink);
+}
+
+.btn-danger {
+  border: 1px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.btn-danger-solid {
+  border: 1px solid var(--danger);
+  background: var(--danger);
+  color: var(--white);
+}
+
+.btn-danger-solid:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: var(--white);
+}
+
+.btn-success {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.btn-success:hover {
+  background: var(--ok-soft);
+  color: var(--ok-hover, var(--ok));
+  filter: saturate(1.2);
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 var(--s3);
+  font-size: 13px;
+}
+
+.btn-lg {
+  height: 44px;
+  padding: 0 var(--s5);
+  font-size: 15px;
+}
+
+/* ---- Components\ui\ConfirmDialog.css ---- */
+.confirm-message {
+  margin: 0;
+  color: var(--ink);
+}
+
+/* ---- Components\ui\EmptyState.css ---- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s7) var(--s5);
+  border-radius: var(--r-md);
+  text-align: center;
+}
+
+.empty-state h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.empty-state p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--ink-muted);
+}
+
+.empty-state-action {
+  margin-top: var(--s3);
+}
+
+/* ---- Components\ui\ErrorState.css ---- */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s7) var(--s5);
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--danger-soft);
+  text-align: center;
+}
+
+.error-state h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--danger);
+}
+
+.error-state p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--ink-muted);
+}
+
+.error-state-action {
+  margin-top: var(--s3);
+}
+
+/* ---- Components\ui\Field.css ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  height: 38px;
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-input);
+  color: var(--ink);
+  font-size: 15px;
+  width: 100%;
+}
+
+.field textarea {
+  height: auto;
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.field select {
+  cursor: pointer;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.field-error-msg {
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.field-error input,
+.field-error select,
+.field-error textarea {
+  border-color: var(--danger);
+}
+
+/* ---- Components\ui\FileUpload.css ---- */
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.file-upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  color: var(--ink-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.file-upload-label:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.file-upload-progress {
+  height: 6px;
+  border-radius: 0;
+  background: var(--bg-hover);
+  overflow: hidden;
+}
+
+.file-upload-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.file-upload-clear {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.file-upload-clear:hover {
+  color: var(--danger-hover);
+}
+
+.file-upload-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+/* ---- Components\ui\FilterPanel.css ---- */
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  align-self: flex-start;
+}
+
+.filter-panel-title {
+  margin: 0;
+  font-size: 15px;
+}
+
+.filter-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* ---- Components\ui\JobCard.css ---- */
+.job-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.job-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-pop);
+  transform: translateY(-2px);
+}
+
+.job-card-type {
+  align-self: flex-start;
+}
+
+.job-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.job-card-meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.job-card-deadline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.job-card-urgent {
+  padding: 2px 8px;
+  border: 1px solid var(--warn);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.job-card-cta {
+  width: auto;
+  align-self: flex-start;
+  margin-top: var(--s2);
+}
+
+.job-card-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: auto;
+  padding-top: var(--s3);
+}
+
+.job-card-actions .btn {
+  width: auto;
+}
+
+/* ---- Components\ui\Modal.css ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s5);
+  background: rgba(20, 18, 16, 0.45);
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-pop);
+  outline: none;
+}
+
+.modal--sm {
+  max-width: 420px;
+}
+
+.modal--lg {
+  max-width: 720px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s4) var(--s5);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--ink);
+}
+
+.modal-body {
+  padding: var(--s5);
+  overflow-y: auto;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s2);
+  padding: var(--s4) var(--s5);
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Components\ui\Pagination.css ---- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  padding: var(--s4) 0;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 var(--s2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--bg-raised);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+
+.pagination-btn.is-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+  padding: 0 var(--s1);
+  color: var(--ink-faint);
+}
+
+.pagination-size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.pagination-size select {
+  height: 32px;
+  padding: 0 var(--s2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-raised);
+  font-size: 13px;
+}
+
+/* ---- Components\ui\SearchBar.css ---- */
+.search-bar input {
+  width: 100%;
+  height: 38px;
+  padding: var(--s2) var(--s3) var(--s2) 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-input);
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.search-bar input::placeholder {
+  color: var(--ink-faint);
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---- Components\ui\Skeleton.css ---- */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s1) 0;
+}
+
+.skeleton-line {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: var(--r-sm);
+  background: var(--bg-hover);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-line:last-child {
+  width: 70%;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---- Components\ui\StatCard.css ---- */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+}
+
+.stat-card-label {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.stat-card-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.stat-card-hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ---- Components\ui\StatusPill.css ---- */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.status-pill--ok {
+  color: var(--ok);
+  background: var(--ok-soft);
+}
+
+.status-pill--accent {
+  color: var(--ink);
+  background: var(--accent-soft);
+}
+
+.status-pill--warn {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.status-pill--danger {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.status-pill--muted {
+  color: var(--ink-muted);
+  background: var(--bg-subtle);
+}
+
+/* ---- Components\ui\Table.css ---- */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead th {
+  padding: var(--s3) var(--s4);
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.table-actions-col {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s2);
+  white-space: nowrap;
+}
+
+.table-actions-col .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  height: 32px;
+  padding: 0 var(--s3);
+}
+
+.table-actions-col .btn.btn-icon,
+.table-actions-col a.btn.btn-icon,
+.table-actions-col button.btn.btn-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  align-self: center;
+}
+
+.table-empty-cell {
+  text-align: center;
+  color: var(--ink-muted);
+  padding: var(--s6) !important;
+}
+
+/* ---- Components\ui\Tabs.css ---- */
+.tabs {
+  display: flex;
+  gap: var(--s1);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tabs-tab {
+  padding: var(--s2) var(--s4);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabs-tab:hover {
+  color: var(--ink);
+}
+
+.tabs-tab.is-active {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent);
+}
+
+.tabs-count {
+  margin-left: var(--s1);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+

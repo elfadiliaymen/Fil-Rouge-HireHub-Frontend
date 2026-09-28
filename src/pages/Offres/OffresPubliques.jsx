@@ -1,26 +1,30 @@
-import JobCard from "../../Components/ui/JobCard";
-import SearchBar from "../../Components/ui/SearchBar";
-import FilterPanel from "../../Components/ui/FilterPanel";
-import Select from "../../Components/ui/Select";
-import ActiveFilterChips from "../../Components/ui/ActiveFilterChips";
-import Pagination from "../../Components/ui/Pagination";
-import Skeleton from "../../Components/ui/Skeleton";
-import EmptyState from "../../Components/ui/EmptyState";
-import ErrorState from "../../Components/ui/ErrorState";
+import JobCard from "../../component/ui/JobCard";
+import SearchBar from "../../component/ui/SearchBar";
+import FilterPanel from "../../component/ui/FilterPanel";
+import Select from "../../component/ui/Select";
+import ActiveFilterChips from "../../component/ui/ActiveFilterChips";
+import Pagination from "../../component/ui/Pagination";
+import Skeleton from "../../component/ui/Skeleton";
+import EmptyState from "../../component/ui/EmptyState";
+import ErrorState from "../../component/ui/ErrorState";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { CONTRAT_LABELS, CONTRAT_VALUES } from "../../utils/constants";
 import { useState, useEffect } from "react";
-import "./Offres.css";
 
 function getQueryParam(key) {
   return new URLSearchParams(window.location.search).get(key) || "";
+}
+
+function toBackendSort(sort) {
+  return sort === "deadline" ? "dateLimite,asc" : "datePublication,desc";
 }
 
 export default function OffresPubliques() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [offres, setOffres] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(getQueryParam("search"));
   const [type, setType] = useState("");
   const [sort, setSort] = useState("recent");
@@ -31,11 +35,23 @@ export default function OffresPubliques() {
     setStatus("loading");
     setError("");
 
-    const request = type ? api.get("/offres/type/" + type) : api.get("/offres");
+    const params = {
+      page,
+      size,
+      sort: toBackendSort(sort),
+    };
 
-    request
+    const needle = search.trim();
+    if (needle) params.q = needle;
+    if (type) params.type = type;
+
+    api
+      .get("/offres", { params })
       .then(function (response) {
         setOffres(response.data.content || []);
+        setTotalPages(response.data.totalPages || 1);
+        setPage(response.data.number !== undefined ? response.data.number : page);
+        setSize(response.data.size || size);
         setStatus("success");
       })
       .catch(function (reason) {
@@ -44,34 +60,7 @@ export default function OffresPubliques() {
       });
   }
 
-  useEffect(load, [type]);
-
-  let filtered = offres;
-
-  const needle = search.trim().toLowerCase();
-  if (needle) {
-    filtered = filtered.filter((offre) =>
-      [offre.titre, offre.localisation, offre.description].some((value) =>
-        (value || "").toLowerCase().includes(needle)
-      )
-    );
-  }
-
-  const sorted = [...filtered];
-
-  if (sort === "deadline") {
-    sorted.sort(
-      (a, b) => new Date(a.dateLimite || 0).getTime() - new Date(b.dateLimite || 0).getTime()
-    );
-  } else {
-    sorted.sort(
-      (a, b) => new Date(b.dateLimite || 0).getTime() - new Date(a.dateLimite || 0).getTime()
-    );
-  }
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / size));
-  const currentPage = Math.min(page, totalPages - 1);
-  const visible = sorted.slice(currentPage * size, currentPage * size + size);
+  useEffect(load, [search, type, sort, page, size]);
 
   function handleSearchChange(next) {
     setSearch(next);
@@ -173,7 +162,7 @@ export default function OffresPubliques() {
 
       {status === "error" && <ErrorState message={error} onRetry={load} />}
 
-      {status === "success" && visible.length === 0 && (
+      {status === "success" && offres.length === 0 && (
         <EmptyState
           title="Aucune offre trouvée"
           message="Modifiez votre recherche ou vos filtres pour voir plus d'offres."
@@ -185,16 +174,16 @@ export default function OffresPubliques() {
         />
       )}
 
-      {status === "success" && visible.length > 0 && (
+      {status === "success" && offres.length > 0 && (
         <>
           <div className="jobs-grid">
-            {visible.map((offre) => (
+            {offres.map((offre) => (
               <JobCard key={offre.id} offre={offre} />
             ))}
           </div>
 
           <Pagination
-            page={currentPage}
+            page={page}
             totalPages={totalPages}
             size={size}
             onPageChange={setPage}

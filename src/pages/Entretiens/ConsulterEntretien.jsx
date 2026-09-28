@@ -5,11 +5,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { formatDate, formatDateTime } from "../../utils/format";
-import { getRole, getUserId } from "../../Components/token";
-import StatusPill from "../../Components/ui/StatusPill";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Entretiens.css";
+import { getRole, getUserId } from "../../component/token";
+import StatusPill from "../../component/ui/StatusPill";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 export default function ConsulterEntretien() {
   const { entretienId } = useParams();
@@ -62,6 +61,18 @@ export default function ConsulterEntretien() {
     role === "ADMIN" ||
     Number(entretien?.recruteur?.id) === Number(userId);
 
+  function enregistrerResultat(statut) {
+    api
+      .patch(`/entretiens/${entretien.id}/resultat/${statut}`)
+      .then(function (response) {
+        setEntretien(response.data);
+        setFeedback("");
+      })
+      .catch(function (reason) {
+        setFeedback(getApiErrorMessage(reason));
+      });
+  }
+
   return (
     <div className="consulter-entretien-page">
       <div className="page-head">
@@ -88,6 +99,62 @@ export default function ConsulterEntretien() {
         </div>
       </div>
 
+      {canManage && (
+        <div className="detail-card">
+          <h2>Résultat de l'entretien</h2>
+          {entretien.statut && entretien.statut !== "PLANIFIE" && (
+            <p className="text-muted">
+              Résultat enregistré :{" "}
+              <StatusPill status={entretien.statut} />
+            </p>
+          )}
+          <p className="text-muted">
+            L'acceptation de la candidature devient possible une fois l'entretien
+            marqué « Réussi ».
+          </p>
+          <div className="actions">
+            {["REUSSI", "ECHEC", "ANNULE"].map(function (statut) {
+              const labels = {
+                REUSSI: "Entretien réussi",
+                ECHEC: "Échec",
+                ANNULE: "Annulé",
+              };
+              const classes = {
+                REUSSI: "btn btn-primary",
+                ECHEC: "btn btn-danger",
+                ANNULE: "btn btn-secondary",
+              };
+              const disabled =
+                (entretien.statut === statut) ||
+                (candidature?.statut === "ACCEPTEE" && statut !== "REUSSI") ||
+                candidature?.statut === "REFUSEE";
+
+              return (
+                <button
+                  key={statut}
+                  type="button"
+                  className={classes[statut]}
+                  onClick={function () {
+                    enregistrerResultat(statut);
+                  }}
+                  disabled={disabled}
+                  title={
+                    candidature?.statut === "REFUSEE"
+                      ? "Candidature refusée"
+                      : candidature?.statut === "ACCEPTEE" && statut !== "REUSSI"
+                        ? "Candidature acceptée"
+                        : undefined
+                  }
+                >
+                  {labels[statut]}
+                </button>
+              );
+            })}
+          </div>
+          {feedback && <p className="form-error">{feedback}</p>}
+        </div>
+      )}
+
       <dl className="detail-grid">
         <div className="detail-field">
           <dt>Date</dt>
@@ -100,6 +167,12 @@ export default function ConsulterEntretien() {
         <div className="detail-field">
           <dt>Lieu</dt>
           <dd>{entretien.lieu}</dd>
+        </div>
+        <div className="detail-field">
+          <dt>Statut</dt>
+          <dd>
+            <StatusPill status={entretien.statut} />
+          </dd>
         </div>
         <div className="detail-field">
           <dt>Recruteur</dt>

@@ -3,17 +3,19 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
+import DownloadIcon from "@mui/icons-material/Download";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole, getUserId } from "../../Components/token";
+import { getRole, getUserId, getUser } from "../../component/token";
 import { CONTRAT_LABELS } from "../../utils/constants";
 import { formatDate, isExpiringSoon } from "../../utils/format";
-import StatusPill from "../../Components/ui/StatusPill";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import Button from "../../Components/ui/Button";
-import "./Offres.css";
+import { downloadCv } from "../../utils/download";
+import StatusPill from "../../component/ui/StatusPill";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import Button from "../../component/ui/Button";
+import Select from "../../component/ui/Select";
 
 export default function ConsulterOffre() {
   const { offreId } = useParams();
@@ -24,6 +26,9 @@ export default function ConsulterOffre() {
   const [candidatures, setCandidatures] = useState([]);
   const [posting, setPosting] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
+  const [cvs, setCvs] = useState([]);
+  const [selectedCvId, setSelectedCvId] = useState("");
+  const [recruiterEmail, setRecruiterEmail] = useState("");
 
   const role = getRole();
   const currentUserId = getUserId();
@@ -49,6 +54,21 @@ export default function ConsulterOffre() {
   useEffect(load, [offreId]);
 
   useEffect(() => {
+    if (!isCandidat) return;
+
+    api
+      .get("/cv", { params: { page: 0, size: 100 } })
+      .then(function (response) {
+        const list = response.data.content || [];
+        setCvs(list);
+        if (list.length > 0) {
+          setSelectedCvId(list[0].id);
+        }
+      })
+      .catch(function () {});
+  }, [isCandidat]);
+
+  useEffect(() => {
     const isOwner =
       role === "ADMIN" ||
       (status === "success" && offre && Number(offre.recruteurId) === Number(currentUserId));
@@ -64,15 +84,42 @@ export default function ConsulterOffre() {
       });
   }, [isManagement, status, offre, offreId, role, currentUserId]);
 
+  useEffect(() => {
+    const isOwner =
+      role === "ADMIN" ||
+      (status === "success" && offre && Number(offre.recruteurId) === Number(currentUserId));
+    if (!isOwner || !offre) return;
+
+    if (role === "ADMIN") {
+      api
+        .get("/users/" + offre.recruteurId)
+        .then(function (response) {
+          setRecruiterEmail(response.data.email || "");
+        })
+        .catch(function () {
+          setRecruiterEmail("");
+        });
+      return;
+    }
+
+    const session = getUser();
+    setRecruiterEmail((session && session.email) || "");
+  }, [isManagement, status, offre, offreId, role, currentUserId]);
+
   const canManage =
     role === "ADMIN" ||
     (status === "success" && offre && Number(offre.recruteurId) === Number(currentUserId));
 
   function handlePostuler() {
+    if (!selectedCvId) {
+      toast.error("Choisissez d'abord le CV à utiliser pour postuler.");
+      return;
+    }
+
     setPosting(true);
 
     api
-      .post("/candidatures", { candidatId: getUserId(), offreId })
+      .post("/candidatures", { candidatId: getUserId(), offreId, cvId: selectedCvId })
       .then(function () {
         toast.success("Candidature soumise avec succès !");
         navigate("/candidatures");
@@ -148,15 +195,38 @@ export default function ConsulterOffre() {
 
         <div className="actions">
           {isCandidat && (
-            <Button
-              className="btn-icon"
-              title={posting ? "Envoi…" : "Postuler"}
-              aria-label={posting ? "Envoi…" : "Postuler"}
-              onClick={handlePostuler}
-              disabled={posting}
-            >
-              <SendIcon />
-            </Button>
+            <div className="postuler-box">
+              {cvs.length === 0 ? (
+                <Link to="/cvs-actions" className="btn btn-secondary">
+                  Ajouter un CV pour postuler
+                </Link>
+              ) : (
+                <>
+                  <Select
+                    id="postuler-cv"
+                    aria-label="Choisir le CV à utiliser"
+                    value={selectedCvId}
+                    onChange={(event) => setSelectedCvId(Number(event.target.value))}
+                  >
+                    <option value="">CV utilisé…</option>
+                    {cvs.map((cv) => (
+                      <option key={cv.id} value={cv.id}>
+                        {cv.nomFichier}
+                      </option>
+                    ))}
+                  </Select>
+                  <Button
+                    className="btn-icon"
+                    title={posting ? "Envoi…" : "Postuler"}
+                    aria-label={posting ? "Envoi…" : "Postuler"}
+                    onClick={handlePostuler}
+                    disabled={posting || !selectedCvId}
+                  >
+                    <SendIcon />
+                  </Button>
+                </>
+              )}
+            </div>
           )}
           {canManage && (
             <Link
@@ -188,10 +258,10 @@ export default function ConsulterOffre() {
               : "—"}
           </dd>
         </div>
-        {canManage && offre.recruteur?.email && (
+        {canManage && recruiterEmail && (
           <div className="detail-field">
             <dt>Email recruteur</dt>
-            <dd>{offre.recruteur.email}</dd>
+            <dd>{recruiterEmail}</dd>
           </div>
         )}
       </dl>
@@ -228,30 +298,52 @@ export default function ConsulterOffre() {
                   <StatusPill status={candidature.statut} />
 
                   <div className="candidature-actions">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      disabled={updatingId === candidature.id}
-                      onClick={() => changeStatut(candidature.id, "accepter")}
-                    >
-                      Accepter
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      disabled={updatingId === candidature.id}
-                      onClick={() => changeStatut(candidature.id, "refuser")}
-                    >
-                      Refuser
-                    </Button>
-                    <Button
-                      variant="subtle"
-                      size="sm"
-                      disabled={updatingId === candidature.id}
-                      onClick={() => changeStatut(candidature.id, "attente")}
-                    >
-                      En attente
-                    </Button>
+                    {candidature.statut === "EN_ATTENTE" && (
+                      <>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          disabled={updatingId === candidature.id}
+                          onClick={() => changeStatut(candidature.id, "accepter")}
+                        >
+                          Accepter
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          disabled={updatingId === candidature.id}
+                          onClick={() => changeStatut(candidature.id, "refuser")}
+                        >
+                          Refuser
+                        </Button>
+                      </>
+                    )}
+                    {candidature.statut === "ACCEPTEE" && (
+                      <Button
+                        variant="subtle"
+                        size="sm"
+                        disabled={updatingId === candidature.id}
+                        onClick={() => changeStatut(candidature.id, "attente")}
+                      >
+                        En attente
+                      </Button>
+                    )}
+                    {candidature.cv && (
+                      <Button
+                        variant="subtle"
+                        size="sm"
+                        className="btn-icon"
+                        title="Télécharger le CV"
+                        aria-label="Télécharger le CV du candidat"
+                        onClick={() =>
+                          downloadCv(candidature.cv.id, candidature.cv.nomFichier).catch(function (reason) {
+                            toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
+                          })
+                        }
+                      >
+                        <DownloadIcon />
+                      </Button>
+                    )}
                     <Link
                       to={`/consulter-candidature/${candidature.id}`}
                       className="btn btn-secondary btn-sm"

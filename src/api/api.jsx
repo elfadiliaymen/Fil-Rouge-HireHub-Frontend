@@ -1,29 +1,47 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getToken, clearSession } from "../Components/token";
+import { clearSession, getToken, isAuthenticated } from "../component/token";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8090/api",
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
-api.interceptors.request.use(
-  function (config) {
-    const token = getToken();
+function isPublicPath(pathname) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/jobs") ||
+    pathname.startsWith("/auth") ||
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/styleguide" ||
+    pathname === "/403"
+  );
+}
 
-    if (token) {
-      config.headers.Authorization = "Bearer " + token;
-    }
+/*
+ * Le token est envoyé en Authorization: Bearer, que le backend JwtFilter
+ * privilégie par rapport au cookie AuthToken. withCredentials reste actif :
+ * le cookie httpOnly sert de repli.
+ */
+api.interceptors.request.use(function (config) {
+  const token = getToken();
 
-    return config;
-  },
-  function (error) {
-    return Promise.reject(error);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
 
+  return config;
+});
+
+/*
+ * Le backend ne déclare aucun AuthenticationEntryPoint : une requête non
+ * authentifiée sur une route protégée renvoie 403 et non 401. On distingue donc
+ * les deux cas avec la présence d'un token valide côté client.
+ */
 api.interceptors.response.use(
   function (response) {
     return response;
@@ -31,13 +49,14 @@ api.interceptors.response.use(
   function (error) {
     const status = error.response && error.response.status;
 
-    if (status === 401) {
+    if (status === 401 || (status === 403 && !isAuthenticated())) {
       clearSession();
-      if (!window.location.pathname.startsWith("/auth")) {
+
+      if (!isPublicPath(window.location.pathname)) {
         window.location.assign("/auth?expired=1");
       }
     } else if (status === 403) {
-      if (!window.location.pathname.startsWith("/403")) {
+      if (!isPublicPath(window.location.pathname)) {
         window.location.assign("/403");
       }
     } else if (status >= 500) {

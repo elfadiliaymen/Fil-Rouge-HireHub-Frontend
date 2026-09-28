@@ -3,15 +3,14 @@ import { Link } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import api from "../api/api";
 import { getApiErrorMessage } from "../api/api";
-import { getRole } from "../Components/token";
-import { formatDate, isExpiringSoon } from "../utils/format";
+import { getRole, getUserId } from "../component/token";
+import { formatDate, formatDateTime, isExpiringSoon } from "../utils/format";
 import { ROLE_LABELS, CONTRAT_LABELS } from "../utils/constants";
-import StatCard from "../Components/ui/StatCard";
-import StatusPill from "../Components/ui/StatusPill";
-import Table from "../Components/ui/Table";
-import Skeleton from "../Components/ui/Skeleton";
-import ErrorState from "../Components/ui/ErrorState";
-import "./Dashboard.css";
+import StatCard from "../component/ui/StatCard";
+import StatusPill from "../component/ui/StatusPill";
+import Table from "../component/ui/Table";
+import Skeleton from "../component/ui/Skeleton";
+import ErrorState from "../component/ui/ErrorState";
 
 export default function Dashboard() {
   const role = getRole();
@@ -26,17 +25,22 @@ export default function Dashboard() {
   const [candidaturesCount, setCandidaturesCount] = useState(0);
   const [entretiensCount, setEntretiensCount] = useState(0);
   const [mesCandidatures, setMesCandidatures] = useState([]);
+  const [mesEntretiens, setMesEntretiens] = useState([]);
+  const [candidatStats, setCandidatStats] = useState(null);
   const [cvsCount, setCvsCount] = useState(0);
   const [recentUsers, setRecentUsers] = useState([]);
   const [expiringOffres, setExpiringOffres] = useState([]);
+  const userId = getUserId();
 
   function load() {
     setStatus("loading");
     setError("");
     setStats(null);
 
+    const offresEndpoint = isRecruteur ? `/offres/recruteur/${userId}` : "/offres";
+
     api
-      .get("/offres", { params: { page: 0, size: 50 } })
+      .get(offresEndpoint, { params: { page: 0, size: 50 } })
       .then(function (offresRes) {
         const offres = offresRes.data.content || [];
         setOffresCount(offresRes.data.totalElements ?? offres.length);
@@ -58,16 +62,28 @@ export default function Dashboard() {
         setCandidaturesCount(candidaturesRes.data.totalElements ?? candidatures.length);
         setMesCandidatures(candidatures.slice(0, 5));
 
-        if (!isManagement) {
-          setEntretiensCount(0);
-          return;
+        if (isManagement) {
+          const entretiensEndpoint = isRecruteur
+            ? `/entretiens/recruteur/${userId}`
+            : "/entretiens";
+
+          return api
+            .get(entretiensEndpoint, { params: { page: 0, size: 1 } })
+            .then(function (entretiensRes) {
+              const entretiens = entretiensRes.data.content || [];
+              setEntretiensCount(entretiensRes.data.totalElements ?? entretiens.length);
+            })
+            .catch(function () {
+              setEntretiensCount(0);
+            });
         }
 
         return api
-          .get("/entretiens", { params: { page: 0, size: 1 } })
+          .get("/entretiens", { params: { page: 0, size: 5 } })
           .then(function (entretiensRes) {
             const entretiens = entretiensRes.data.content || [];
             setEntretiensCount(entretiensRes.data.totalElements ?? entretiens.length);
+            setMesEntretiens(entretiens);
           })
           .catch(function () {
             setEntretiensCount(0);
@@ -90,6 +106,18 @@ export default function Dashboard() {
       .then(function () {
         if (role !== "CANDIDAT") return;
 
+        return api.get("/candidatures/stats").then(function (statsRes) {
+          setCandidatStats({
+            total: statsRes.data.total,
+            EN_ATTENTE: statsRes.data.enAttente,
+            ACCEPTEE: statsRes.data.acceptees,
+            REFUSEE: statsRes.data.refusees,
+          });
+        });
+      })
+      .then(function () {
+        if (role !== "CANDIDAT") return;
+
         return api.get("/cv").then(function (cvsRes) {
           setCvsCount(cvsRes.data.totalElements ?? (cvsRes.data.content || []).length);
         });
@@ -103,12 +131,12 @@ export default function Dashboard() {
       });
   }
 
-  useEffect(load, [isAdmin, isManagement, role]);
+  useEffect(load, [isAdmin, isManagement, isRecruteur, role, userId]);
 
   const candidatCounts = {
-    EN_ATTENTE: mesCandidatures.filter((c) => c.statut === "EN_ATTENTE").length,
-    ACCEPTEE: mesCandidatures.filter((c) => c.statut === "ACCEPTEE").length,
-    REFUSEE: mesCandidatures.filter((c) => c.statut === "REFUSEE").length,
+    EN_ATTENTE: candidatStats?.EN_ATTENTE ?? 0,
+    ACCEPTEE: candidatStats?.ACCEPTEE ?? 0,
+    REFUSEE: candidatStats?.REFUSEE ?? 0,
   };
 
   if (status === "loading") {
@@ -167,6 +195,7 @@ export default function Dashboard() {
           <StatCard label="Acceptées" value={candidatCounts.ACCEPTEE} />
           <StatCard label="Refusées" value={candidatCounts.REFUSEE} />
           <StatCard label="Mes CV" value={cvsCount} />
+          <StatCard label="Mes entretiens" value={entretiensCount} />
         </div>
       )}
 
@@ -304,6 +333,41 @@ export default function Dashboard() {
                       </span>
                     </div>
                     <StatusPill status={candidature.statut} />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+        {role === "CANDIDAT" && (
+          <section className="dashboard-section">
+            <div className="section-head">
+              <h2 className="section-title">Mes prochains entretiens</h2>
+              <Link to="/entretiens" className="btn btn-secondary btn-sm">
+                Tout voir
+              </Link>
+            </div>
+            {mesEntretiens.length === 0 ? (
+              <p className="text-muted">Aucun entretien planifié pour le moment.</p>
+            ) : (
+              <div className="row-list">
+                {mesEntretiens.map((entretien) => (
+                  <Link
+                    key={entretien.id}
+                    to={`/consulter-entretien/${entretien.id}`}
+                    className="row-list-item"
+                  >
+                    <div>
+                      <strong>
+                        {formatDateTime(`${entretien.date}T${entretien.heure}`)}
+                      </strong>
+                      <span className="text-muted text-sm">
+                        {entretien.lieu || "Lieu à confirmer"}
+                        {entretien.recruteur
+                          ? ` · ${entretien.recruteur.prenom} ${entretien.recruteur.nom}`
+                          : ""}
+                      </span>
+                    </div>
                   </Link>
                 ))}
               </div>

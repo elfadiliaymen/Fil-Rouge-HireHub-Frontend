@@ -4,16 +4,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { getApiErrorMessage } from "../api/api";
-import { saveSession, getRole } from "../Components/token";
+import { saveSession, getRole } from "../component/token";
 import { getLandingRoute } from "../config/roles";
-import Button from "../Components/ui/Button";
-import Input from "../Components/ui/Input";
+import Button from "../component/ui/Button";
+import Input from "../component/ui/Input";
 import { loginSchema, registerSchema } from "../utils/schemas/authSchema";
-import "./auth.css";
 
 const ROLE_CARDS = [
   { value: "CANDIDAT", label: "Candidat", description: "Je cherche un emploi" },
-  { value: "RECRUTEUR", label: "Recruteur", description: "Je recrute" },
 ];
 
 function getQueryParams() {
@@ -29,10 +27,7 @@ export default function AuthPage({ mode: modeProp }) {
     modeProp || (params.get("mode") === "register" ? "register" : "login");
   const isRegister = mode === "register";
   const expired = params.get("expired") === "1";
-  const preselectedRole = params.get("role");
-  const initialRole = ROLE_CARDS.some((card) => card.value === preselectedRole)
-    ? preselectedRole
-    : "CANDIDAT";
+  const initialRole = "CANDIDAT";
 
   const [authError, setAuthError] = useState("");
   const [selectedRole, setSelectedRole] = useState(initialRole);
@@ -61,7 +56,11 @@ export default function AuthPage({ mode: modeProp }) {
   });
 
   function enterPlatform(token) {
-    saveSession(token);
+    if (!saveSession(token)) {
+      setAuthError("Réponse de connexion invalide : jeton de session illisible.");
+      return;
+    }
+
     const from = location.state && location.state.from;
     navigate(from || getLandingRoute(getRole()), { replace: true });
   }
@@ -75,16 +74,16 @@ export default function AuthPage({ mode: modeProp }) {
           prenom: data.prenom,
           email: data.email,
           password: data.password,
-          role: data.role,
+          role: "CANDIDAT",
           telephone: data.telephone || null,
           adresse: data.adresse || null,
-          entreprise: data.role === "RECRUTEUR" ? data.entreprise || null : null,
-          poste: data.role === "RECRUTEUR" ? data.poste || null : null,
-          telephonePro: data.role === "RECRUTEUR" ? data.telephonePro || null : null,
-          dateNaissance: data.role === "CANDIDAT" ? data.dateNaissance || null : null,
-          niveauEtude: data.role === "CANDIDAT" ? data.niveauEtude || null : null,
-          experienceAnnees: data.role === "CANDIDAT" ? data.experienceAnnees || 0 : 0,
-          linkedinUrl: data.role === "CANDIDAT" ? data.linkedinUrl || null : null,
+          entreprise: null,
+          poste: null,
+          telephonePro: null,
+          dateNaissance: data.dateNaissance || null,
+          niveauEtude: data.niveauEtude || null,
+          experienceAnnees: data.experienceAnnees || 0,
+          linkedinUrl: data.linkedinUrl || null,
         }
       : {
           email: data.email,
@@ -120,7 +119,7 @@ export default function AuthPage({ mode: modeProp }) {
           <h1>{isRegister ? "Créer un compte" : "Se connecter"}</h1>
           <p className="text-muted">
             {isRegister
-              ? "Rejoignez la plateforme pour postuler ou recruter."
+              ? "Rejoignez la plateforme pour postuler aux offres."
               : "Accédez à votre espace pour suivre vos candidatures et offres."}
           </p>
         </div>
@@ -221,36 +220,6 @@ export default function AuthPage({ mode: modeProp }) {
                   {...register("adresse")}
                 />
               </div>
-
-              {selectedRole === "RECRUTEUR" && (
-                <div className="auth-section">
-                  <h2 className="auth-section-title">Informations professionnelles</h2>
-                  <div className="auth-grid">
-                    <Input
-                      id="auth-entreprise"
-                      label="Entreprise"
-                      placeholder="Ex. TechCorp"
-                      error={errors.entreprise && errors.entreprise.message}
-                      {...register("entreprise")}
-                    />
-                    <Input
-                      id="auth-poste"
-                      label="Poste"
-                      placeholder="Ex. Responsable RH"
-                      error={errors.poste && errors.poste.message}
-                      {...register("poste")}
-                    />
-                  </div>
-                  <Input
-                    id="auth-telephone-pro"
-                    label="Téléphone professionnel"
-                    placeholder="Ex. 01 23 45 67 89"
-                    autoComplete="tel"
-                    error={errors.telephonePro && errors.telephonePro.message}
-                    {...register("telephonePro")}
-                  />
-                </div>
-              )}
 
               {selectedRole === "CANDIDAT" && (
                 <div className="auth-section">

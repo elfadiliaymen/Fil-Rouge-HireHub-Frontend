@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import { getRole } from "../../Components/token";
+import { getRole } from "../../component/token";
 
 export default function CandidatureActions() {
   const isAdmin = getRole() === "ADMIN";

@@ -6,23 +6,11 @@ import api from "../api/api";
 import { getApiErrorMessage } from "../api/api";
 import { infoSchema, passwordSchema } from "../utils/schemas/profileSchema";
 import { ROLE_LABELS } from "../utils/constants";
-import Input from "../Components/ui/Input";
-import Button from "../Components/ui/Button";
-import StatusPill from "../Components/ui/StatusPill";
-import Skeleton from "../Components/ui/Skeleton";
-import "./Profile.css";
-
-function userInitials(user) {
-  if (!user) return "?";
-  const prenom = (user.prenom || "").trim();
-  const nom = (user.nom || "").trim();
-
-  if (prenom && nom) {
-    return (prenom[0] + nom[0]).toUpperCase();
-  }
-
-  return ((user.email || nom || "?").trim()[0] || "?").toUpperCase();
-}
+import { userInitials } from "../utils/format";
+import Input from "../component/ui/Input";
+import Button from "../component/ui/Button";
+import StatusPill from "../component/ui/StatusPill";
+import Skeleton from "../component/ui/Skeleton";
 
 export default function Profile() {
   const { user, setUser } = useOutletContext();

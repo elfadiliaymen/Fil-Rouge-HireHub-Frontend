@@ -4,17 +4,18 @@ import { toast } from "react-toastify";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import DownloadIcon from "@mui/icons-material/Download";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole } from "../../Components/token";
+import { getRole } from "../../component/token";
 import { CONTRAT_LABELS } from "../../utils/constants";
-import { formatDate } from "../../utils/format";
-import StatusPill from "../../Components/ui/StatusPill";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import Button from "../../Components/ui/Button";
-import "./Candidatures.css";
+import { formatDate, formatDateTime } from "../../utils/format";
+import { downloadCv } from "../../utils/download";
+import StatusPill from "../../component/ui/StatusPill";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import Button from "../../component/ui/Button";
 
 export default function ConsulterCandidature() {
   const { candidatureId } = useParams();
@@ -129,7 +130,7 @@ export default function ConsulterCandidature() {
               className="btn-icon"
               title="Accepter"
               aria-label="Accepter la candidature"
-              disabled={updating || candidature.statut === "ACCEPTEE"}
+              disabled={updating || candidature.statut !== "EN_ATTENTE"}
               onClick={() => changeStatut("accepter")}
             >
               <CheckIcon />
@@ -140,7 +141,7 @@ export default function ConsulterCandidature() {
               className="btn-icon"
               title="Refuser"
               aria-label="Refuser la candidature"
-              disabled={updating || candidature.statut === "REFUSEE"}
+              disabled={updating || candidature.statut !== "EN_ATTENTE"}
               onClick={() => changeStatut("refuser")}
             >
               <CloseIcon />
@@ -151,7 +152,7 @@ export default function ConsulterCandidature() {
               className="btn-icon"
               title="En attente"
               aria-label="Remettre la candidature en attente"
-              disabled={updating || candidature.statut === "EN_ATTENTE"}
+              disabled={updating || candidature.statut !== "ACCEPTEE"}
               onClick={() => changeStatut("attente")}
             >
               <ScheduleIcon />
@@ -189,6 +190,65 @@ export default function ConsulterCandidature() {
 
         {offre.description && (
           <p className="detail-description">{offre.description}</p>
+        )}
+      </div>
+
+      <div className="detail-card">
+        <div className="detail-card-head">
+          <h2>Entretiens</h2>
+        </div>
+
+        {!candidature.entretiens || candidature.entretiens.length === 0 ? (
+          <p className="text-muted">Aucun entretien planifié pour cette candidature.</p>
+        ) : (
+          <ul className="candidatures-liste">
+            {candidature.entretiens.map((entretien) => (
+              <li key={entretien.id} className="candidature-row">
+                <div className="candidature-info">
+                  <strong>
+                    {formatDateTime(`${entretien.date}T${entretien.heure}`)}
+                  </strong>
+                  <span className="text-muted text-sm">
+                    {entretien.lieu || "Lieu à confirmer"}
+                    {entretien.recruteur
+                      ? ` · ${entretien.recruteur.prenom} ${entretien.recruteur.nom}`
+                      : ""}
+                  </span>
+                </div>
+                <Link
+                  to={`/consulter-entretien/${entretien.id}`}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Détail
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="detail-card">
+        <div className="detail-card-head">
+          <h2>CV du candidat</h2>
+        </div>
+
+        {candidature.cv ? (
+          <div className="cv-download-row">
+            <span className="cv-download-name">{candidature.cv.nomFichier}</span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                downloadCv(candidature.cv.id, candidature.cv.nomFichier).catch(function (reason) {
+                  toast.error(getApiErrorMessage(reason, "Le téléchargement a échoué."));
+                })
+              }
+            >
+              <DownloadIcon /> Télécharger
+            </Button>
+          </div>
+        ) : (
+          <p className="text-muted">Aucun CV fourni pour cette candidature.</p>
         )}
       </div>
 

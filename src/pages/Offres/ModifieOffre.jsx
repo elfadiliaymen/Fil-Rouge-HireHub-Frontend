@@ -5,16 +5,16 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole, getUserId } from "../../Components/token";
+import { getRole, getUserId } from "../../component/token";
 import { offreFormSchema } from "../../utils/schemas/offreSchema";
+import { todayString } from "../../utils/format";
 import { CONTRAT_LABELS, CONTRAT_VALUES } from "../../utils/constants";
-import Input from "../../Components/ui/Input";
-import Select from "../../Components/ui/Select";
-import Textarea from "../../Components/ui/Textarea";
-import Button from "../../Components/ui/Button";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Offres.css";
+import Input from "../../component/ui/Input";
+import Select from "../../component/ui/Select";
+import Textarea from "../../component/ui/Textarea";
+import Button from "../../component/ui/Button";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 export default function ModifieOffre() {
   const { offreId } = useParams();
@@ -143,6 +143,7 @@ export default function ModifieOffre() {
           id="offre-date-limite"
           label="Date limite de candidature"
           type="date"
+          min={todayString()}
           error={errors.dateLimite?.message}
           {...register("dateLimite")}
         />

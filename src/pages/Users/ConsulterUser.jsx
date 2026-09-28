@@ -8,13 +8,12 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getUserId } from "../../Components/token";
+import { getUserId } from "../../component/token";
 import { ROLE_LABELS } from "../../utils/constants";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import ConfirmDialog from "../../Components/ui/ConfirmDialog";
-import Button from "../../Components/ui/Button";
-import "./Users.css";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
+import ConfirmDialog from "../../component/ui/ConfirmDialog";
+import Button from "../../component/ui/Button";
 
 export default function ConsulterUser() {
   const { userId } = useParams();

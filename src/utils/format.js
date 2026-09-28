@@ -30,3 +30,24 @@ export function isExpiringSoon(dateStr, days = 3) {
   if (deadline.getTime() < now) return false;
   return deadline.getTime() - now < days * 24 * 60 * 60 * 1000;
 }
+
+export function todayString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function userInitials(user) {
+  if (!user) return "?";
+
+  const prenom = (user.prenom || "").trim();
+  const nom = (user.nom || "").trim();
+
+  if (prenom && nom) {
+    return (prenom[0] + nom[0]).toUpperCase();
+  }
+
+  return ((user.email || nom || "?").trim()[0] || "?").toUpperCase();
+}

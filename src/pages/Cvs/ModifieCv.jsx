@@ -4,11 +4,10 @@ import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { formatDate } from "../../utils/format";
-import FileUpload from "../../Components/ui/FileUpload";
-import Button from "../../Components/ui/Button";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Cvs.css";
+import FileUpload from "../../component/ui/FileUpload";
+import Button from "../../component/ui/Button";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 export default function ModifieCv() {
   const { cvId } = useParams();

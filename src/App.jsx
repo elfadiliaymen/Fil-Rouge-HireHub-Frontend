@@ -1,120 +1,57 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
-import ProtectedLayout from "./Components/ProtectedLayout";
-import PublicLayout from "./Components/PublicLayout";
-import RoleGuard from "./Components/RoleGuard";
-import AccessDenied from "./Components/AccessDenied";
-import NotFound from "./Components/NotFound";
+import ProtectedLayout from "./component/ProtectedLayout";
+import PublicLayout from "./component/PublicLayout";
+import RoleGuard from "./component/RoleGuard";
+import AccessDenied from "./component/AccessDenied";
+import NotFound from "./component/NotFound";
+import { isAuthenticated, getRole } from "./component/token";
+import { ROLES, MANAGEMENT_ROLES, getLandingRoute } from "./config/roles";
+
 import AuthPage from "./auth/Auth";
 import Styleguide from "./pages/Styleguide";
 import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
-import { isAuthenticated, getRole } from "./Components/token";
-import { ROLES, MANAGEMENT_ROLES, getLandingRoute } from "./config/roles";
 import Dashboard from "./pages/Dashboard";
-import UserActions from "./pages/Users/UserActions";
-import UsersList from "./pages/Users/UsersList";
-import AddUser from "./pages/Users/AddUser";
-import ModifieUser from "./pages/Users/ModifieUser";
-import ConsulterUser from "./pages/Users/ConsulterUser";
-import CvActions from "./pages/Cvs/CvActions";
-import CvsList from "./pages/Cvs/CvsList";
-import AddCv from "./pages/Cvs/AddCv";
-import ModifieCv from "./pages/Cvs/ModifieCv";
-import ConsulterCv from "./pages/Cvs/ConsulterCv";
-import CandidatureActions from "./pages/Candidatures/CandidatureActions";
-import CandidaturesList from "./pages/Candidatures/CandidaturesList";
-import AddCandidature from "./pages/Candidatures/AddCandidature";
-import ModifieCandidature from "./pages/Candidatures/ModifieCandidature";
-import ConsulterCandidature from "./pages/Candidatures/ConsulterCandidature";
-import OffreActions from "./pages/Offres/OffreActions";
-import OffresList from "./pages/Offres/OffresList";
-import AddOffre from "./pages/Offres/AddOffre";
-import ModifieOffre from "./pages/Offres/ModifieOffre";
-import ConsulterOffre from "./pages/Offres/ConsulterOffre";
-import OffresPubliques from "./pages/Offres/OffresPubliques";
-import OffrePublique from "./pages/Offres/OffrePublique";
-import EntretienActions from "./pages/Entretiens/EntretienActions";
-import EntretiensList from "./pages/Entretiens/EntretiensList";
-import AddEntretien from "./pages/Entretiens/AddEntretien";
-import ModifieEntretien from "./pages/Entretiens/ModifieEntretien";
-import ConsulterEntretien from "./pages/Entretiens/ConsulterEntretien";
 
-const PROTECTED_ROUTES = [
-  // Général
-  { path: "/dashboard", element: <Dashboard />, roles: ROLES },
-  { path: "/profile", element: <Profile />, roles: ROLES },
+import UserActions from "./pages/users/UserActions";
+import UsersList from "./pages/users/UsersList";
+import AddUser from "./pages/users/AddUser";
+import ModifieUser from "./pages/users/ModifieUser";
+import ConsulterUser from "./pages/users/ConsulterUser";
 
-  // Offres
-  { path: "/offres-actions", element: <OffreActions />, roles: MANAGEMENT_ROLES },
-  { path: "/offres", element: <OffresList />, roles: ROLES },
-  { path: "/add-offre", element: <AddOffre />, roles: MANAGEMENT_ROLES },
-  { path: "/consulter-offre/:offreId", element: <ConsulterOffre />, roles: ROLES },
-  { path: "/update-offre/:offreId", element: <ModifieOffre />, roles: MANAGEMENT_ROLES },
+import OffreActions from "./pages/offres/OffreActions";
+import OffresList from "./pages/offres/OffresList";
+import AddOffre from "./pages/offres/AddOffre";
+import ModifieOffre from "./pages/offres/ModifieOffre";
+import ConsulterOffre from "./pages/offres/ConsulterOffre";
+import OffresPubliques from "./pages/offres/OffresPubliques";
+import OffrePublique from "./pages/offres/OffrePublique";
 
-  // Candidatures
-  {
-    path: "/candidatures-actions",
-    element: <CandidatureActions />,
-    roles: MANAGEMENT_ROLES,
-  },
-  { path: "/candidatures", element: <CandidaturesList />, roles: ROLES },
-  { path: "/add-candidature", element: <AddCandidature />, roles: ["ADMIN"] },
-  {
-    path: "/consulter-candidature/:candidatureId",
-    element: <ConsulterCandidature />,
-    roles: ROLES,
-  },
-  {
-    path: "/update-candidature/:candidatureId",
-    element: <ModifieCandidature />,
-    roles: MANAGEMENT_ROLES,
-  },
+import CandidatureActions from "./pages/candidatures/CandidatureActions";
+import CandidaturesList from "./pages/candidatures/CandidaturesList";
+import AddCandidature from "./pages/candidatures/AddCandidature";
+import ModifieCandidature from "./pages/candidatures/ModifieCandidature";
+import ConsulterCandidature from "./pages/candidatures/ConsulterCandidature";
 
-  // CV (espace candidat)
-  { path: "/cvs-actions", element: <CvActions />, roles: ["CANDIDAT"] },
-  { path: "/cvs", element: <CvsList />, roles: ["CANDIDAT"] },
-  { path: "/add-cv", element: <AddCv />, roles: ["CANDIDAT"] },
-  { path: "/consulter-cv/:cvId", element: <ConsulterCv />, roles: ["CANDIDAT"] },
-  { path: "/update-cv/:cvId", element: <ModifieCv />, roles: ["CANDIDAT"] },
+import CvActions from "./pages/cvs/CvActions";
+import CvsList from "./pages/cvs/CvsList";
+import AddCv from "./pages/cvs/AddCv";
+import ModifieCv from "./pages/cvs/ModifieCv";
+import ConsulterCv from "./pages/cvs/ConsulterCv";
 
-  // Entretiens
-  {
-    path: "/entretiens-actions",
-    element: <EntretienActions />,
-    roles: MANAGEMENT_ROLES,
-  },
-  {
-    path: "/entretiens",
-    element: <EntretiensList />,
-    roles: MANAGEMENT_ROLES,
-  },
-  {
-    path: "/add-entretien",
-    element: <AddEntretien />,
-    roles: MANAGEMENT_ROLES,
-  },
-  {
-    path: "/consulter-entretien/:entretienId",
-    element: <ConsulterEntretien />,
-    roles: MANAGEMENT_ROLES,
-  },
-  {
-    path: "/update-entretien/:entretienId",
-    element: <ModifieEntretien />,
-    roles: MANAGEMENT_ROLES,
-  },
+import EntretienActions from "./pages/entretiens/EntretienActions";
+import EntretiensList from "./pages/entretiens/EntretiensList";
+import AddEntretien from "./pages/entretiens/AddEntretien";
+import ModifieEntretien from "./pages/entretiens/ModifieEntretien";
+import ConsulterEntretien from "./pages/entretiens/ConsulterEntretien";
 
-  // Utilisateurs (admin uniquement)
-  { path: "/users-actions", element: <UserActions />, roles: ["ADMIN"] },
-  { path: "/users", element: <UsersList />, roles: ["ADMIN"] },
-  { path: "/add-user", element: <AddUser />, roles: ["ADMIN"] },
-  { path: "/consulter-user/:userId", element: <ConsulterUser />, roles: ["ADMIN"] },
-  { path: "/update-user/:userId", element: <ModifieUser />, roles: ["ADMIN"] },
-];
+const ADMIN = ["ADMIN"];
+const CANDIDAT = ["CANDIDAT"];
 
+// Anyone already logged in never sees the login / register / landing pages,
+// they are sent straight to the home page of their role.
 function PublicOnly({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getLandingRoute(getRole())} replace />;
@@ -173,17 +110,248 @@ function App() {
         <Route element={<ProtectedLayout />}>
           <Route path="/access-denied" element={<AccessDenied />} />
 
-          {PROTECTED_ROUTES.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={
-                <RoleGuard allowedRoles={route.roles}>
-                  {route.element}
-                </RoleGuard>
-              }
-            />
-          ))}
+          <Route
+            path="/dashboard"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <Dashboard />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <Profile />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/offres-actions"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <OffreActions />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/offres"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <OffresList />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/add-offre"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <AddOffre />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/consulter-offre/:offreId"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <ConsulterOffre />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/update-offre/:offreId"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <ModifieOffre />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/candidatures-actions"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <CandidatureActions />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/candidatures"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <CandidaturesList />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/add-candidature"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <AddCandidature />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/consulter-candidature/:candidatureId"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <ConsulterCandidature />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/update-candidature/:candidatureId"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <ModifieCandidature />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/cvs-actions"
+            element={
+              <RoleGuard allowedRoles={CANDIDAT}>
+                <CvActions />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/cvs"
+            element={
+              <RoleGuard allowedRoles={CANDIDAT}>
+                <CvsList />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/add-cv"
+            element={
+              <RoleGuard allowedRoles={CANDIDAT}>
+                <AddCv />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/consulter-cv/:cvId"
+            element={
+              <RoleGuard allowedRoles={CANDIDAT}>
+                <ConsulterCv />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/update-cv/:cvId"
+            element={
+              <RoleGuard allowedRoles={CANDIDAT}>
+                <ModifieCv />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/entretiens-actions"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <EntretienActions />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/entretiens"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <EntretiensList />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/add-entretien"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <AddEntretien />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/consulter-entretien/:entretienId"
+            element={
+              <RoleGuard allowedRoles={ROLES}>
+                <ConsulterEntretien />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/update-entretien/:entretienId"
+            element={
+              <RoleGuard allowedRoles={MANAGEMENT_ROLES}>
+                <ModifieEntretien />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/users-actions"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <UserActions />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/users"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <UsersList />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/add-user"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <AddUser />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/consulter-user/:userId"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <ConsulterUser />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="/update-user/:userId"
+            element={
+              <RoleGuard allowedRoles={ADMIN}>
+                <ModifieUser />
+              </RoleGuard>
+            }
+          />
         </Route>
 
         <Route path="*" element={<NotFound />} />

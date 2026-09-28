@@ -5,14 +5,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole, getUserId } from "../../Components/token";
+import { getRole, getUserId } from "../../component/token";
 import { entretienFormSchema } from "../../utils/schemas/entretienSchema";
-import Input from "../../Components/ui/Input";
-import Select from "../../Components/ui/Select";
-import Button from "../../Components/ui/Button";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Entretiens.css";
+import Input from "../../component/ui/Input";
+import Select from "../../component/ui/Select";
+import Button from "../../component/ui/Button";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 export default function ModifieEntretien() {
   const { entretienId } = useParams();

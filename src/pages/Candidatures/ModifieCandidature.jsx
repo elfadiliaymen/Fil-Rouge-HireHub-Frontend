@@ -8,12 +8,11 @@ import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { STATUT_LABELS, STATUT_VALUES } from "../../utils/constants";
 import { formatDate } from "../../utils/format";
-import Select from "../../Components/ui/Select";
-import StatusPill from "../../Components/ui/StatusPill";
-import Button from "../../Components/ui/Button";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Candidatures.css";
+import Select from "../../component/ui/Select";
+import StatusPill from "../../component/ui/StatusPill";
+import Button from "../../component/ui/Button";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 const schema = yup.object({
   statut: yup.string().oneOf(STATUT_VALUES).required("Le statut est obligatoire"),

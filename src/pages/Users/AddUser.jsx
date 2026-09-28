@@ -6,10 +6,9 @@ import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { userCreateSchema } from "../../utils/schemas/userSchema";
 import { ROLE_LABELS, ROLE_VALUES } from "../../utils/constants";
-import Input from "../../Components/ui/Input";
-import Select from "../../Components/ui/Select";
-import Button from "../../Components/ui/Button";
-import "./Users.css";
+import Input from "../../component/ui/Input";
+import Select from "../../component/ui/Select";
+import Button from "../../component/ui/Button";
 
 export default function AddUser() {
   const navigate = useNavigate();

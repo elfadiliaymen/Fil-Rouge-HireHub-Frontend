@@ -6,11 +6,10 @@ import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
 import { candidatureFormSchema } from "../../utils/schemas/candidatureSchema";
-import Select from "../../Components/ui/Select";
-import Button from "../../Components/ui/Button";
-import Skeleton from "../../Components/ui/Skeleton";
-import ErrorState from "../../Components/ui/ErrorState";
-import "./Candidatures.css";
+import Select from "../../component/ui/Select";
+import Button from "../../component/ui/Button";
+import Skeleton from "../../component/ui/Skeleton";
+import ErrorState from "../../component/ui/ErrorState";
 
 export default function AddCandidature() {
   const navigate = useNavigate();
@@ -19,18 +18,23 @@ export default function AddCandidature() {
   const [error, setError] = useState("");
   const [candidats, setCandidats] = useState([]);
   const [offres, setOffres] = useState([]);
+  const [cvOptions, setCvOptions] = useState([]);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(candidatureFormSchema),
     defaultValues: {
       candidatId: "",
       offreId: "",
+      cvId: "",
     },
   });
+
+  const selectedCandidatId = watch("candidatId");
 
   useEffect(() => {
     api
@@ -49,9 +53,29 @@ export default function AddCandidature() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!selectedCandidatId) {
+      setCvOptions([]);
+      return;
+    }
+
+    api
+      .get("/cv/candidat/" + selectedCandidatId, { params: { page: 0, size: 100 } })
+      .then(function (response) {
+        setCvOptions(response.data.content || []);
+      })
+      .catch(function () {
+        setCvOptions([]);
+      });
+  }, [selectedCandidatId]);
+
   function onSubmit(data) {
     api
-      .post("/candidatures", data)
+      .post("/candidatures", {
+        candidatId: Number(data.candidatId),
+        offreId: Number(data.offreId),
+        cvId: data.cvId ? Number(data.cvId) : 0,
+      })
       .then(function () {
         toast.success("Candidature soumise avec succès !");
         navigate("/candidatures");
@@ -103,6 +127,20 @@ export default function AddCandidature() {
           {offres.map((offre) => (
             <option key={offre.id} value={offre.id}>
               {offre.titre} — {offre.localisation}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          id="cand-cv"
+          label="CV utilisé (optionnel)"
+          disabled={!selectedCandidatId}
+          {...register("cvId")}
+        >
+          <option value="">Aucun CV</option>
+          {cvOptions.map((cv) => (
+            <option key={cv.id} value={cv.id}>
+              {cv.nomFichier}
             </option>
           ))}
         </Select>

@@ -1,25 +1,24 @@
 import { useState } from "react";
-import Button from "../Components/ui/Button";
-import Input from "../Components/ui/Input";
-import Select from "../Components/ui/Select";
-import Textarea from "../Components/ui/Textarea";
-import Badge from "../Components/ui/Badge";
-import StatusPill from "../Components/ui/StatusPill";
-import Table from "../Components/ui/Table";
-import Pagination from "../Components/ui/Pagination";
-import Tabs from "../Components/ui/Tabs";
-import Skeleton from "../Components/ui/Skeleton";
-import EmptyState from "../Components/ui/EmptyState";
-import ErrorState from "../Components/ui/ErrorState";
-import Modal from "../Components/ui/Modal";
-import ConfirmDialog from "../Components/ui/ConfirmDialog";
-import FileUpload from "../Components/ui/FileUpload";
-import JobCard from "../Components/ui/JobCard";
-import StatCard from "../Components/ui/StatCard";
-import SearchBar from "../Components/ui/SearchBar";
-import FilterPanel from "../Components/ui/FilterPanel";
-import ActiveFilterChips from "../Components/ui/ActiveFilterChips";
-import "./Styleguide.css";
+import Button from "../component/ui/Button";
+import Input from "../component/ui/Input";
+import Select from "../component/ui/Select";
+import Textarea from "../component/ui/Textarea";
+import Badge from "../component/ui/Badge";
+import StatusPill from "../component/ui/StatusPill";
+import Table from "../component/ui/Table";
+import Pagination from "../component/ui/Pagination";
+import Tabs from "../component/ui/Tabs";
+import Skeleton from "../component/ui/Skeleton";
+import EmptyState from "../component/ui/EmptyState";
+import ErrorState from "../component/ui/ErrorState";
+import Modal from "../component/ui/Modal";
+import ConfirmDialog from "../component/ui/ConfirmDialog";
+import FileUpload from "../component/ui/FileUpload";
+import JobCard from "../component/ui/JobCard";
+import StatCard from "../component/ui/StatCard";
+import SearchBar from "../component/ui/SearchBar";
+import FilterPanel from "../component/ui/FilterPanel";
+import ActiveFilterChips from "../component/ui/ActiveFilterChips";
 
 const SAMPLE_OFFRE = {
   id: 1,

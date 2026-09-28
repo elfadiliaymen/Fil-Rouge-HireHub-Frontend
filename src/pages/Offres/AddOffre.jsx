@@ -5,18 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../api/api";
 import { getApiErrorMessage } from "../../api/api";
-import { getRole, getUserId } from "../../Components/token";
+import { getRole, getUserId } from "../../component/token";
 import { offreFormSchema } from "../../utils/schemas/offreSchema";
+import { todayString } from "../../utils/format";
 import { CONTRAT_LABELS, CONTRAT_VALUES } from "../../utils/constants";
-import Input from "../../Components/ui/Input";
-import Select from "../../Components/ui/Select";
-import Textarea from "../../Components/ui/Textarea";
-import Button from "../../Components/ui/Button";
-import "./Offres.css";
-
-function todayString() {
-  return new Date().toISOString().slice(0, 10);
-}
+import Input from "../../component/ui/Input";
+import Select from "../../component/ui/Select";
+import Textarea from "../../component/ui/Textarea";
+import Button from "../../component/ui/Button";
 
 export default function AddOffre() {
   const navigate = useNavigate();
