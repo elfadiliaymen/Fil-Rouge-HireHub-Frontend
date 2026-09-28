@@ -16,6 +16,7 @@ import ErrorState from "../../component/ui/ErrorState";
 import EmptyState from "../../component/ui/EmptyState";
 import ConfirmDialog from "../../component/ui/ConfirmDialog";
 import Button from "../../component/ui/Button";
+import StatusPill from "../../component/ui/StatusPill";
 
 export default function EntretiensList() {
   const role = getRole();
@@ -97,6 +98,7 @@ export default function EntretiensList() {
   const columns = [
     { key: "datetime", label: "Date" },
     { key: "lieu", label: "Lieu" },
+    { key: "statut", label: "Statut" },
     { key: "candidature", label: "Candidature" },
     { key: "recruteur", label: "Recruteur" },
     { key: "actions", label: "Actions", className: "table-actions-col" },
@@ -152,6 +154,9 @@ export default function EntretiensList() {
                 </Link>
               </td>
               <td>{entretien.lieu}</td>
+              <td>
+                <StatusPill status={entretien.statut} />
+              </td>
               <td>
                 <Link
                   to={`/consulter-candidature/${entretien.candidatureId}`}
