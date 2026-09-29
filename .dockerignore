@@ -9,3 +9,5 @@ docker-compose.yml
 .idea/
 logs/
 *.log
+.env
+.env.*
