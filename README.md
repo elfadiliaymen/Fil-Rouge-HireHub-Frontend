@@ -8,7 +8,7 @@
 
 Le frontend HireHub est une application web moderne développée avec React, destinée à offrir une expérience utilisateur claire et efficace pour les recruteurs et les candidats. L'interface se connecte au backend via API REST, protège les routes selon les rôles et fournit des composants réutilisables pour les tableaux, formulaires et notifications.
 
-L'architecture vise la performance en développement (Vite), la maintenabilité des composants (Material UI) et la qualité du code via outils d'analyse et pipelines CI.
+L'architecture vise la performance en développement (Vite), la maintenabilité des composants (Material UI) et la qualité du code via des outils d'analyse statique (oxlint).
 
 ---
 
