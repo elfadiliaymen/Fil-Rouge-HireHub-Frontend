@@ -10,7 +10,6 @@ import { isAuthenticated, getRole } from "./component/token";
 import { ROLES, MANAGEMENT_ROLES, getLandingRoute } from "./config/roles";
 
 import AuthPage from "./auth/Auth";
-import Styleguide from "./pages/Styleguide";
 import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
@@ -102,7 +101,6 @@ function App() {
               </PublicOnly>
             }
           />
-          <Route path="/styleguide" element={<Styleguide />} />
           <Route path="/jobs" element={<OffresPubliques />} />
           <Route path="/jobs/:offreId" element={<OffrePublique />} />
         </Route>

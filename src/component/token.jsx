@@ -1,23 +1,5 @@
 import { jwtDecode } from "jwt-decode";
 
-/*
- * Session JWT (HireHub backend)
- * -----------------------------
- * POST /api/auth/login et /api/auth/register renvoient le JWT en text/plain :
- * response.data est donc la chaîne brute du token, à décoder côté client.
- *
- * Claims émis par le backend (JwtUtils.generateToken) :
- *   id   -> identifiant de l'utilisateur
- *   sub  -> email de l'utilisateur
- *   role -> rôle en majuscules (ADMIN | RECRUTEUR | CANDIDAT)
- *   iat  -> date d'émission (secondes)
- *   exp  -> expiration (secondes), 1 h par défaut
- *
- * Le token est stocké dans localStorage : il survit au rechargement de la page,
- * ce qui permet de relire les claims sans appel réseau. Un cache des claims est
- * mis à jour à partir de GET /api/me, car le rôle fait autorité côté base de
- * données et le claim du token peut être devenu obsolète.
- */
 const TOKEN_KEY = "hirehub_token";
 const CLAIMS_KEY = "hirehub_claims";
 
@@ -33,7 +15,7 @@ function writeStorage(key, value) {
   try {
     window.localStorage.setItem(key, value);
   } catch {
-    /* navigation privée ou stockage indisponible */
+    
   }
 }
 
@@ -41,12 +23,11 @@ function removeStorage(key) {
   try {
     window.localStorage.removeItem(key);
   } catch {
-    /* rien à faire */
+    
   }
 }
 
-/* Le backend renvoie le token en text/plain ; on tolère aussi un objet
-   enveloppant (token / accessToken) pour ne jamais casser la connexion. */
+
 function normalizeToken(value) {
   if (typeof value === "string") return value.trim() || null;
   if (value && typeof value === "object") {
@@ -88,9 +69,7 @@ function getToken() {
   return readStorage(TOKEN_KEY);
 }
 
-/* Décode le token stocké. C'est la seule source qui fait autorité pour
-   l'authentification : un cache périmé ou absent ne peut pas ressusciter une
-   session, et un token expiré invalide immédiatement la session. */
+
 function readTokenClaims() {
   const token = getToken();
 
@@ -128,14 +107,7 @@ function getClaims() {
 
   const cached = readCachedClaims();
 
-  /* GET /api/me fait autorité sur le rôle : un rôle modifié en base est visible
-     immédiatement, sans attendre l'expiration du token. Le cache n'est retenu
-     que s'il correspond au token courant (même exp), pour ne pas réutiliser
-     les claims d'une session précédente sur un poste partagé.
-
-     Ce cache ne protège rien : l'autorisation réelle est appliquée par le
-     backend, qui relit le rôle en base à chaque requête. Un localStorage
-     falsifié ne fait que tromper l'affichage du client. */
+ 
   const claims =
     cached && cached.exp === fromToken.exp
       ? {
@@ -185,8 +157,7 @@ function saveSession(value) {
   return true;
 }
 
-/* GET /api/me fait autorité sur l'identité et le rôle : on rafraîchit le cache
-   des claims sans toucher au token. */
+
 function applyProfile(user) {
   if (!user || user.role == null) {
     clearSession();

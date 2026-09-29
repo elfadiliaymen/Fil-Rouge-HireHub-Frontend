@@ -17,16 +17,11 @@ function isPublicPath(pathname) {
     pathname.startsWith("/auth") ||
     pathname === "/login" ||
     pathname === "/register" ||
-    pathname === "/styleguide" ||
     pathname === "/403"
   );
 }
 
-/*
- * Le token est envoyé en Authorization: Bearer, que le backend JwtFilter
- * privilégie par rapport au cookie AuthToken. withCredentials reste actif :
- * le cookie httpOnly sert de repli.
- */
+
 api.interceptors.request.use(function (config) {
   const token = getToken();
 
@@ -37,11 +32,7 @@ api.interceptors.request.use(function (config) {
   return config;
 });
 
-/*
- * Le backend ne déclare aucun AuthenticationEntryPoint : une requête non
- * authentifiée sur une route protégée renvoie 403 et non 401. On distingue donc
- * les deux cas avec la présence d'un token valide côté client.
- */
+
 api.interceptors.response.use(
   function (response) {
     return response;
